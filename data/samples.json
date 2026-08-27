@@ -1,0 +1,199 @@
+[
+  {
+    "slug": "sample-magic-1", "category": "magician", "type": "C", "design": "OS-102",
+    "sample": true, "order": 11, "art": { "prop": "dove" },
+    "name": "홍길동", "nameMark": "홍길동", "role": "Magician · Stage",
+    "summary": "기업 행사와 축제 무대. 15분 · 30분 구성으로 나눠 운영합니다.",
+    "intro": ["무대에서 멀리 보여주는 마술을 합니다. 객석 뒤에서도 보이도록 크게 만듭니다."],
+    "facts": { "전문 분야": "스테이지 매직", "경력": "12년", "활동 지역": "전국", "섭외 가능": "상시" },
+    "acts": [
+      { "name": "오프닝 임팩트", "time": "5분", "stage": "3×3m", "note": "행사 시작 직후" },
+      { "name": "스테이지 매직", "time": "15분", "stage": "4×4m · 조명", "note": "가장 많이 선택" },
+      { "name": "피날레", "time": "8분", "stage": "5×5m", "note": "사전 답사 권장" }
+    ],
+    "history": [
+      { "year": "2026.06", "text": "○○기업 창립기념식 · 임직원 400명" },
+      { "year": "2026.04", "text": "○○시 봄 축제 · 야외 무대" }
+    ],
+    "listing": { "field": "행사 · 기업", "region": "전국", "available": "섭외 가능" }
+  },
+  {
+    "slug": "sample-magic-2", "category": "magician", "type": "A", "design": "OS-109",
+    "sample": true, "order": 12, "art": { "prop": "cards" },
+    "name": "김철수", "nameMark": "김철수", "role": "Magician · Close-up",
+    "tagline": "손이 닿는 거리에서\n일어나는 일.",
+    "summary": "테이블 라운딩 전문. 레스토랑과 소규모 모임에서 활동합니다.",
+    "intro": ["가까이에서 보는 마술을 합니다. 카드 한 벌과 동전 몇 개면 어디서든 시작합니다."],
+    "facts": { "전문 분야": "클로즈업", "경력": "8년", "활동 지역": "서울 · 경기", "섭외 가능": "주말" },
+    "acts": [
+      { "name": "테이블 라운딩", "time": "40분", "stage": "무대 불필요", "note": "식사 시간대" },
+      { "name": "바 매직", "time": "60분", "stage": "카운터", "note": "상주 가능" }
+    ],
+    "listing": { "field": "클로즈업", "region": "서울 · 경기", "available": "주말 가능" }
+  },
+  {
+    "slug": "sample-magic-3", "category": "magician", "type": "B", "design": "OS-112",
+    "sample": true, "order": 13, "art": { "count": 5, "prop": "hat" },
+    "name": "온스테이지 매직컴퍼니", "nameMark": "온스테이지", "role": "Magic Company",
+    "summary": "5인 구성 공연팀. 극장과 지역 축제 초청 공연을 합니다.",
+    "intro": ["일루전과 클로즈업을 한 무대에 올립니다. 70분 단독 공연을 정기적으로 진행합니다."],
+    "facts": { "구성": "5인", "러닝타임": "70분", "활동 지역": "전국", "섭외 가능": "협의" },
+    "shows": [
+      { "date": "11.14", "time": "금 19:30", "title": "일곱 번째 상자", "place": "대학로 소극장" },
+      { "date": "11.22", "time": "토 17:00", "title": "겨울 매직 갈라", "place": "성남아트센터" }
+    ],
+    "acts": [{ "name": "단독 공연", "time": "70분", "stage": "극장", "note": "리허설 3시간" }],
+    "listing": { "field": "공연팀", "region": "전국", "available": "협의" }
+  },
+
+  {
+    "slug": "sample-song-1", "category": "singer", "type": "C", "design": "OS-104",
+    "sample": true, "order": 21, "art": { "prop": "mic" },
+    "name": "이영희", "nameMark": "이영희", "role": "Trot Singer",
+    "summary": "행사와 축제 무대. 15분 · 30분 · 45분 구성으로 나눠 운영합니다.",
+    "intro": ["행사 무대는 노래만으로 되지 않습니다. 앞뒤 순서에 맞춰 분위기를 올리고 내리는 일이 절반입니다."],
+    "facts": { "섭외 가능": "상시", "활동 지역": "전국", "구성 시간": "15 · 30 · 45분", "단가": "문의 시 안내" },
+    "songs": [
+      { "title": "첫 번째 노래", "year": "2024", "note": "행사 오프닝" },
+      { "title": "두 번째 노래", "year": "2025", "note": "" }
+    ],
+    "acts": [
+      { "name": "축하 무대", "time": "15분", "stage": "3×3m", "note": "무선 마이크 1대" },
+      { "name": "진행 겸행", "time": "45분", "stage": "4×4m", "note": "MC 가능" }
+    ],
+    "history": [{ "year": "2026.05", "text": "○○군 어버이날 행사" }],
+    "listing": { "field": "트롯 · 행사", "region": "전국", "available": "섭외 가능" }
+  },
+  {
+    "slug": "sample-song-2", "category": "singer", "type": "A", "design": "OS-103",
+    "sample": true, "order": 22, "art": { "prop": "guitar" },
+    "name": "박영수", "nameMark": "박영수", "role": "Singer · Songwriter",
+    "tagline": "쓴 노래를\n직접 부릅니다.",
+    "summary": "직접 만든 곡으로 공연합니다. 소극장과 카페 무대.",
+    "intro": ["곡을 쓰고 직접 부릅니다. 큰 무대보다 가까운 자리를 좋아합니다."],
+    "facts": { "전문 분야": "싱어송라이터", "경력": "6년", "활동 지역": "서울", "섭외 가능": "평일" },
+    "songs": [
+      { "title": "세 번째 노래", "year": "2025", "note": "대표곡" },
+      { "title": "네 번째 노래", "year": "2026", "note": "신곡" }
+    ],
+    "listing": { "field": "싱어송라이터", "region": "서울", "available": "평일 가능" }
+  },
+  {
+    "slug": "sample-song-3", "category": "singer", "type": "C", "design": "OS-115",
+    "sample": true, "order": 23, "art": { "prop": "handmic" },
+    "name": "최영자", "nameMark": "최영자", "role": "Vocalist · MC",
+    "summary": "노래와 진행을 함께 봅니다. 기업 행사와 워크숍.",
+    "intro": ["무대에 서는 시간보다 마이크를 잡는 시간이 깁니다. 진행과 노래를 한 사람이 맡으면 흐름이 끊기지 않습니다."],
+    "facts": { "전문 분야": "보컬 · MC", "경력": "10년", "활동 지역": "전국", "섭외 가능": "상시" },
+    "acts": [
+      { "name": "행사 진행", "time": "120분", "stage": "무대 · 마이크", "note": "대본 협의" },
+      { "name": "축하 공연", "time": "20분", "stage": "3×3m", "note": "" }
+    ],
+    "listing": { "field": "보컬 · MC", "region": "전국", "available": "섭외 가능" }
+  },
+
+  {
+    "slug": "sample-actor-1", "category": "actor", "type": "A", "design": "OS-101",
+    "sample": true, "order": 31, "art": { "prop": "plain" },
+    "name": "김민서", "nameMark": "김민서", "role": "Actor",
+    "tagline": "카메라 앞에서\n오래 버티는 사람.",
+    "summary": "연극과 독립영화. 소속사 없이 직접 오디션에 나갑니다.",
+    "profileTitle": "배우 소개", "galleryTitle": "프로필 컷",
+    "intro": ["무대에서 시작해 카메라로 옮겨 왔습니다. 대사가 많은 역보다 오래 서 있는 역을 좋아합니다."],
+    "facts": { "신장 · 체중": "172cm · 58kg", "특기": "승마 · 검도", "활동 지역": "서울", "소속": "프리랜서" },
+    "works": [
+      { "year": "2026", "title": "작품 이름", "role": "주연", "medium": "독립영화" },
+      { "year": "2025", "title": "작품 이름", "role": "조연", "medium": "연극" },
+      { "year": "2024", "title": "작품 이름", "role": "단역", "medium": "드라마" }
+    ],
+    "contactTitle": "캐스팅 문의",
+    "contactNote": "작품과 배역, 촬영 일정만 알려주시면 가능 여부를 먼저 답해 드립니다.",
+    "listing": { "field": "배우", "region": "서울", "available": "오디션 가능" }
+  },
+  {
+    "slug": "sample-actor-2", "category": "actor", "type": "A", "design": "OS-111",
+    "sample": true, "order": 32, "art": { "prop": "frame" },
+    "name": "정한결", "nameMark": "정한결", "role": "Actor · Film",
+    "tagline": "말보다\n얼굴로 하는 연기.",
+    "summary": "장편 영화 중심. 감독과 오래 작업하는 쪽을 선호합니다.",
+    "profileTitle": "배우 소개", "galleryTitle": "스틸",
+    "intro": ["클로즈업이 많은 역을 주로 맡았습니다. 대사 없이 버티는 장면을 좋아합니다."],
+    "facts": { "신장": "180cm", "특기": "수영 · 기타", "활동 지역": "서울 · 부산", "소속": "프리랜서" },
+    "works": [
+      { "year": "2026", "title": "작품 이름", "role": "주연", "medium": "장편영화" },
+      { "year": "2025", "title": "작품 이름", "role": "주연", "medium": "단편영화" }
+    ],
+    "contactTitle": "캐스팅 문의",
+    "listing": { "field": "배우 · 영화", "region": "서울", "available": "일정 협의" }
+  },
+  {
+    "slug": "sample-actor-3", "category": "actor", "type": "C", "design": "OS-106",
+    "sample": true, "order": 33, "art": { "prop": "handmic" },
+    "name": "서윤아", "nameMark": "서윤아", "role": "Actor · Voice",
+    "summary": "연극과 성우. 낭독 공연과 오디오 드라마도 함께 합니다.",
+    "profileTitle": "소개", "galleryTitle": "공연 사진",
+    "intro": ["목소리로 하는 일이 늘었습니다. 무대와 녹음실을 오갑니다."],
+    "facts": { "전문 분야": "연극 · 성우", "경력": "9년", "활동 지역": "서울", "섭외 가능": "상시" },
+    "works": [
+      { "year": "2026", "title": "작품 이름", "role": "내레이션", "medium": "오디오드라마" },
+      { "year": "2025", "title": "작품 이름", "role": "주연", "medium": "연극" }
+    ],
+    "contactTitle": "섭외 문의",
+    "listing": { "field": "배우 · 성우", "region": "서울", "available": "섭외 가능" }
+  },
+
+  {
+    "slug": "sample-band-1", "category": "band", "type": "B", "design": "OS-105",
+    "sample": true, "order": 41, "art": { "count": 4, "prop": "guitar" },
+    "name": "온스테이지 밴드", "nameMark": "온스테이지", "role": "Band",
+    "summary": "4인조. 월 2~3회 공연하고 있습니다.",
+    "profileTitle": "밴드 소개", "scheduleTitle": "공연 일정",
+    "intro": ["합주실에서 만든 곡을 그대로 무대에 올립니다. 다듬기보다 그날의 소리를 남기는 쪽을 택합니다."],
+    "facts": { "구성": "보컬 · 기타 · 베이스 · 드럼", "활동 지역": "서울 · 경기", "공연 빈도": "월 2~3회", "섭외 가능": "협의" },
+    "shows": [
+      { "date": "11.08", "time": "금 20:00", "title": "가을 단독", "place": "홍대 클럽" },
+      { "date": "11.29", "time": "토 18:00", "title": "합동 공연", "place": "성수 라이브홀" }
+    ],
+    "members": [
+      { "name": "멤버 1", "part": "보컬" }, { "name": "멤버 2", "part": "기타" },
+      { "name": "멤버 3", "part": "베이스" }, { "name": "멤버 4", "part": "드럼" }
+    ],
+    "songs": [{ "title": "수록곡 이름", "year": "2025", "note": "" }],
+    "contactTitle": "섭외 · 대관 문의",
+    "listing": { "field": "밴드", "region": "서울 · 경기", "available": "협의" }
+  },
+  {
+    "slug": "sample-band-2", "category": "band", "type": "B", "design": "OS-113",
+    "sample": true, "order": 42, "art": { "count": 3, "prop": "guitar" },
+    "name": "온스테이지 크루", "nameMark": "크루", "role": "Indie Crew",
+    "summary": "3인조. 버스킹과 클럽 공연을 함께 합니다.",
+    "profileTitle": "소개", "scheduleTitle": "공연 일정",
+    "intro": ["거리에서 시작했습니다. 작은 무대일수록 잘 맞습니다."],
+    "facts": { "구성": "3인", "활동 지역": "서울", "공연 빈도": "주 1회", "섭외 가능": "상시" },
+    "shows": [
+      { "date": "11.02", "time": "일 16:00", "title": "홍대 버스킹", "place": "걷고싶은거리" },
+      { "date": "11.16", "time": "일 16:00", "title": "홍대 버스킹", "place": "걷고싶은거리" }
+    ],
+    "members": [
+      { "name": "멤버 1", "part": "보컬 · 기타" }, { "name": "멤버 2", "part": "카혼" },
+      { "name": "멤버 3", "part": "베이스" }
+    ],
+    "listing": { "field": "인디 · 버스킹", "region": "서울", "available": "섭외 가능" }
+  },
+  {
+    "slug": "sample-band-3", "category": "band", "type": "A", "design": "OS-114",
+    "sample": true, "order": 43, "art": { "count": 2, "prop": "guitar" },
+    "name": "늦은고백", "nameMark": "늦은고백", "role": "Duo",
+    "tagline": "두 사람이\n만드는 소리.",
+    "summary": "2인 듀오. 카페와 소극장 공연.",
+    "profileTitle": "듀오 소개",
+    "intro": ["기타 하나와 목소리 둘. 편성을 늘리지 않기로 했습니다."],
+    "facts": { "구성": "2인", "활동 지역": "서울 · 경기", "공연 빈도": "월 4회", "섭외 가능": "상시" },
+    "members": [{ "name": "멤버 1", "part": "보컬" }, { "name": "멤버 2", "part": "기타" }],
+    "songs": [
+      { "title": "수록곡 이름", "year": "2025", "note": "대표곡" },
+      { "title": "수록곡 이름", "year": "2026", "note": "" }
+    ],
+    "listing": { "field": "듀오 · 어쿠스틱", "region": "서울 · 경기", "available": "섭외 가능" }
+  }
+]

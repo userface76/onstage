@@ -1,0 +1,51 @@
+{
+  "slug": "hwanghwi",
+  "category": "magician",
+  "type": "C",
+  "accent": "gold",
+  "order": 1,
+  "draft": true,
+
+  "name": "황휘",
+  "nameMark": "黃 輝",
+  "role": "Magician · Dove Magic",
+  "tagline": "손끝에서\n새가 날아오릅니다.",
+  "summary": "도브 매직 · 스테이지 매직. 무대 크기와 시간에 맞춰 구성을 조정해 드립니다.",
+
+  "intro": [
+    "도브 매직은 숨길 곳이 거의 없는 마술입니다. 살아 있는 새가 상대이기 때문에 손의 각도와 호흡, 무대의 조명까지 전부 맞아떨어져야 한 마리가 제대로 날아오릅니다.",
+    "그래서 이 마술은 연습한 시간이 그대로 보입니다. 관객은 트릭을 모르지만, 그 순간이 쉽게 만들어진 것이 아니라는 것은 압니다."
+  ],
+
+  "photos": {
+    "hero": "hero.jpg",
+    "portrait": "portrait.png",
+    "card": "hero.jpg",
+    "gallery": ["hero.jpg"]
+  },
+
+  "facts": {
+    "전문 분야": "도브 매직 · 스테이지",
+    "경력": "",
+    "활동 지역": "",
+    "섭외 가능": ""
+  },
+
+  "acts": [],
+  "shows": [],
+  "history": [],
+
+  "contact": {
+    "phone": "",
+    "email": "",
+    "kakao": "",
+    "instagram": "",
+    "youtube": ""
+  },
+
+  "listing": {
+    "field": "행사 · 기업 · 축제",
+    "region": "",
+    "available": ""
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "onstage",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "온스테이지 — 아티스트 홈페이지 제작 플랫폼. 데이터 한 벌 + 직군 블록 + 유형 배치",
+  "scripts": {
+    "build": "node build.mjs",
+    "serve": "node build.mjs && npx --yes serve dist"
+  }
+}
