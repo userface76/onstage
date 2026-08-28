@@ -13,6 +13,7 @@ import { css } from './theme.mjs';
 import { placeholder } from './placeholder.mjs';
 import { designFor, FONT_HREF } from './designs.mjs';
 import { INQUIRY_JS } from './inquiry.mjs';
+import { LIGHTBOX_CSS, LIGHTBOX_JS } from './lightbox.mjs';
 
 /* ---------- 도구 ---------- */
 
@@ -83,9 +84,14 @@ function profileBlock(artist) {
 function galleryBlock(artist) {
   // 사진이 있으면 있는 만큼 전부 건다 — 개수 제한이 없다.
   // 한 장도 없으면 캐릭터 그림 넉 장으로 채운다.
+  // 단추로 만들어야 눌러서 크게 볼 수 있고 키보드로도 넘어간다.
   const shots = artist.photos?.gallery || [];
-  const cells = (shots.length ? shots : [0, 1, 2, 3])
-    .map((_, i) => `<div style="background-image:url(&quot;${esc(pic(artist, 'gallery', i))}&quot;)"></div>`);
+  const cells = (shots.length ? shots : [0, 1, 2, 3]).map((_, i) => {
+    const src = pic(artist, 'gallery', i);
+    const alt = `${artist.name} 사진 ${i + 1}`;
+    return `<button type="button" data-src="${esc(src)}" data-alt="${esc(alt)}"
+      aria-label="${esc(alt)} 크게 보기" style="background-image:url(&quot;${esc(src)}&quot;)"></button>`;
+  });
   return `<div class="wrap"><section id="gallery">
     <p class="eye">Gallery</p>
     <h2>${esc(artist.galleryTitle || '무대에서')}</h2>
@@ -384,6 +390,7 @@ ${artist.photos?.hero ? `<meta property="og:image" content="${esc(artist.photos.
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="${FONT_HREF}">
 <style>${css(artist.accent)}
+${LIGHTBOX_CSS}
 /* ${design.code} · ${design.name} */
 ${design.css}</style>
 </head>
@@ -403,7 +410,8 @@ ${opts.preview ? '' : relatedBlock(artist, opts.all, site)}
   <span style="opacity:.5"> · </span>
   <a href="/#contact" style="color:var(--ivory-3);text-decoration:none">홈페이지 제작 문의</a>
 </p>
-<script>${INQUIRY_JS}</script>
+<script>${INQUIRY_JS}
+${LIGHTBOX_JS}</script>
 </body>
 </html>`;
 }

@@ -78,11 +78,13 @@ export async function onRequestPost({ request, env }) {
   const to = env.INQUIRY_EMAIL;
 
   // 아직 연결 전이면 조용히 접수만 한다. 문의가 사라지는 것보다 낫다고 알린다.
+  // 어느 값이 없는지는 이름만 돌려준다 — 값은 절대 내보내지 않는다.
   if (!key || !to) {
     console.log('메일 미연결 · 접수 내용:\n' + lines);
     return ok({
       ok: true,
       sent: false,
+      missing: [!key ? 'RESEND_API_KEY' : null, !to ? 'INQUIRY_EMAIL' : null].filter(Boolean),
       message: '접수되었습니다. 메일 연결 전이라 확인이 늦어질 수 있습니다.',
     });
   }

@@ -11,6 +11,12 @@
     "binding": "ASSETS",
     "not_found_handling": "404-page"
   },
+  // 문의를 받을 주소. 비밀이 아니라 사이트에도 적혀 있으므로 여기 둔다.
+  // 대시보드에 Text 로 넣으면 배포할 때마다 지워지므로 여기가 안전하다.
+  // 비밀인 RESEND_API_KEY 만 대시보드에 Secret 으로 넣는다.
+  "vars": {
+    "INQUIRY_EMAIL": "userface@naver.com"
+  },
   "observability": {
     "enabled": true
   }

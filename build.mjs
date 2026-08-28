@@ -10,7 +10,8 @@
  */
 
 import { readFile, readdir, mkdir, cp, writeFile, rm } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -23,18 +24,47 @@ const p = (...xs) => path.join(root, ...xs);
 
 const readJson = async (f) => JSON.parse(await readFile(f, 'utf8'));
 
+/**
+ * 사진 내용을 보고 같은 그림인지 가린다.
+ * 파일명만 다르고 내용이 같은 사진이 흔하다 (choi0.jpg 와 choi2.jpg 처럼).
+ * 이름으로만 거르면 같은 사진이 두 번 실린다.
+ */
+const hashCache = new Map();
+function contentKey(webPath) {
+  if (!webPath || webPath.startsWith('http') || webPath.startsWith('data:')) return webPath;
+  if (hashCache.has(webPath)) return hashCache.get(webPath);
+  const file = p('public', webPath.replace(/^\//, ''));
+  let key = webPath;
+  try {
+    key = createHash('sha1').update(readFileSync(file)).digest('hex');
+  } catch { /* 파일이 없으면 경로를 열쇠로 쓴다 */ }
+  hashCache.set(webPath, key);
+  return key;
+}
+
 /** 사진 경로를 /artists/<slug>/ 기준 절대경로로 바꾼다. 이미 /나 http면 그대로 둔다. */
 function resolvePhotos(a) {
   const base = `/artists/${a.slug}/`;
   const fix = (v) => (!v || v.startsWith('/') || v.startsWith('http')) ? v : base + v;
   const ph = a.photos || {};
-  a.photos = {
-    ...ph,
-    hero: fix(ph.hero),
-    portrait: fix(ph.portrait),
-    card: fix(ph.card),
-    gallery: (ph.gallery || []).map(fix),
-  };
+  const hero = fix(ph.hero);
+  const portrait = fix(ph.portrait);
+  const card = fix(ph.card);
+
+  // 첫 화면과 프로필에 이미 쓴 사진은 갤러리에서 뺀다 — 같은 사진이 두 번 나오면 성의 없어 보인다.
+  // 파일명이 아니라 내용을 비교하므로, 이름만 다른 같은 사진도 걸러진다.
+  const seen = new Set([hero, portrait].filter(Boolean).map(contentKey));
+  const gallery = [];
+  for (const raw of ph.gallery || []) {
+    const s = fix(raw);
+    if (!s) continue;
+    const key = contentKey(s);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    gallery.push(s);
+  }
+
+  a.photos = { ...ph, hero, portrait, card, gallery };
   (a.members || []).forEach((m) => { m.photo = fix(m.photo); });
   return a;
 }

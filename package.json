@@ -6,6 +6,8 @@
   "description": "온스테이지 — 아티스트 홈페이지 제작 플랫폼. 데이터 한 벌 + 직군 블록 + 유형 배치",
   "scripts": {
     "build": "node build.mjs",
-    "serve": "node build.mjs && npx --yes serve dist"
+    "serve": "node build.mjs && npx --yes serve dist",
+    "export": "node export.mjs",
+    "export:all": "node export.mjs --all"
   }
 }
