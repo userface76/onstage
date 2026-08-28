@@ -8,6 +8,7 @@
     "build": "node build.mjs",
     "serve": "node build.mjs && npx --yes serve dist",
     "export": "node export.mjs",
-    "export:all": "node export.mjs --all"
+    "export:all": "node export.mjs --all",
+    "export:done": "node export.mjs --done"
   }
 }

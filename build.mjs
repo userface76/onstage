@@ -16,7 +16,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { renderArtist, CATEGORY_LABEL } from './src/render.mjs';
-import { renderLanding, renderList, renderDesigns } from './src/pages.mjs';
+import { renderLanding, renderList, renderDesigns, renderApply } from './src/pages.mjs';
 import { DESIGNS } from './src/designs.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
@@ -127,6 +127,10 @@ async function main() {
   await mkdir(path.join(dist, 'list'), { recursive: true });
   await writeFile(path.join(dist, 'list', 'index.html'), renderList(site, listed), 'utf8');
 
+  // 제작 신청서
+  await mkdir(path.join(dist, 'apply'), { recursive: true });
+  await writeFile(path.join(dist, 'apply', 'index.html'), renderApply(site, DESIGNS), 'utf8');
+
   // 디자인 갤러리 + 디자인마다 미리보기 한 장
   await mkdir(path.join(dist, 'designs'), { recursive: true });
   await writeFile(path.join(dist, 'designs', 'index.html'), renderDesigns(site, DESIGNS), 'utf8');
@@ -146,7 +150,7 @@ async function main() {
   console.log(`  디자인 ${DESIGNS.length}종 · 미리보기 생성`);
 
   // 검색엔진용
-  const urls = ['', 'list/', ...artists.map((a) => `${a.slug}/`)];
+  const urls = ['', 'list/', 'designs/', 'apply/', ...artists.map((a) => `${a.slug}/`)];
   await writeFile(path.join(dist, 'sitemap.xml'),
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
     urls.map((u) => `  <url><loc>${site.origin}/${u}</loc></url>`).join('\n') +

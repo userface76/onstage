@@ -4,6 +4,7 @@ import { css, FONTS } from './theme.mjs';
 import { esc, CATEGORY_LABEL } from './render.mjs';
 import { placeholder } from './placeholder.mjs';
 import { INQUIRY_JS } from './inquiry.mjs';
+import { applyBody, APPLY_CSS } from './apply.mjs';
 
 const shell = (site, { title, desc, body, extra = '' }) => `<!doctype html>
 <html lang="ko">
@@ -141,9 +142,9 @@ ${extra}</style>
     <a href="/designs/">디자인</a>
     <a href="/list/">아티스트</a>
     <a href="/#price">요금</a>
-    <a href="/#contact">문의</a>
+    <a href="/apply/">신청</a>
   </nav>
-  <a class="sitebar__home" href="/#contact">제작 문의</a>
+  <a class="sitebar__home" href="/apply/">제작 신청</a>
 </div></header>
 ${body}
 <script>${INQUIRY_JS}</script>
@@ -359,6 +360,17 @@ export function renderLanding(site, artists) {
 </section></div>`;
 
   return shell(site, { title: `${site.brand} — ${site.tagline}`, desc: site.description, body });
+}
+
+/* ---------- 제작 신청서 ---------- */
+
+export function renderApply(site, designs) {
+  return shell(site, {
+    title: `제작 신청서 — ${site.brand}`,
+    desc: '자료를 한 번에 보내주시면 3~5일 안에 만들어 드립니다.',
+    body: applyBody(site, designs),
+    extra: APPLY_CSS,
+  });
 }
 
 /* ---------- 디자인 갤러리 ---------- */

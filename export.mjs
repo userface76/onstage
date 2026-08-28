@@ -4,8 +4,12 @@
  * 마지막으로 내보낸 시점 이후에 바뀐 파일만 `E:\온스테이지_업로드` 에 담는다.
  * 매번 6MB 를 통째로 올리지 않아도 되고, 무엇이 바뀌었는지 눈으로 확인할 수 있다.
  *
- *   node export.mjs         바뀐 것만
+ *   node export.mjs         바뀐 것만 뽑는다 (기준점은 그대로 둔다)
  *   node export.mjs --all   전부 (처음이거나 꼬였을 때)
+ *   node export.mjs --done  올리기를 마쳤다고 표시한다 — 이때만 기준점이 옮겨간다
+ *
+ * 뽑기만 하고 기준점을 옮기지 않는 이유: 올리기 전에 기준점이 움직이면
+ * 아직 안 올린 파일이 다음 목록에서 빠져 버린다.
  *
  * 지워진 파일은 GitHub 웹에서 직접 지워야 한다 — 드래그 업로드로는 삭제가 안 된다.
  * 그래서 지워진 것이 있으면 목록으로 알려 준다.
@@ -25,8 +29,15 @@ const git = (...args) =>
   execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim();
 
 const all = process.argv.includes('--all');
+const done = process.argv.includes('--done');
 
 const head = git('rev-parse', 'HEAD');
+
+if (done) {
+  await writeFile(MARK, head + '\n', 'utf8');
+  console.log('\n올린 것으로 표시했습니다. 다음부터는 이후에 바뀐 것만 나옵니다.\n');
+  process.exit(0);
+}
 let since = null;
 if (!all && existsSync(MARK)) {
   const saved = (await readFile(MARK, 'utf8')).trim();
@@ -78,8 +89,6 @@ for (const f of changed) {
   bytes += (await readFile(src)).length;
 }
 
-await writeFile(MARK, head + '\n', 'utf8');
-
 /* ---------- 사람이 읽을 결과 ---------- */
 
 const mb = (n) => (n / 1024 / 1024).toFixed(2);
@@ -98,4 +107,8 @@ if (removed.length) {
   for (const f of removed) console.log('  ' + f);
 }
 
-console.log('');
+if (changed.length || removed.length) {
+  console.log('\n다 올리셨으면:  npm run export:done\n');
+} else {
+  console.log('');
+}
