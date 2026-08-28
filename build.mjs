@@ -15,7 +15,7 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { renderArtist, CATEGORY_LABEL } from './src/render.mjs';
+import { renderArtist, renderArtistPages, CATEGORY_LABEL } from './src/render.mjs';
 import { renderLanding, renderList, renderDesigns, renderApply } from './src/pages.mjs';
 import { DESIGNS } from './src/designs.mjs';
 
@@ -117,8 +117,20 @@ async function main() {
   for (const a of artists) {
     const out = path.join(dist, a.slug);
     await mkdir(out, { recursive: true });
-    await writeFile(path.join(out, 'index.html'), renderArtist(a, site, { all: artists }), 'utf8');
-    console.log(`  ${a.slug.padEnd(14)} ${CATEGORY_LABEL[a.category]} · ${a.type}안${a.draft ? ' (시안)' : ''}`);
+
+    if (a.multipage) {
+      // 소개 · 무대 · 갤러리 · 섭외를 각각 따로 — 개인 홈페이지처럼
+      for (const page of renderArtistPages(a, site, { all: artists })) {
+        const dir = page.key ? path.join(out, page.key) : out;
+        await mkdir(dir, { recursive: true });
+        await writeFile(path.join(dir, 'index.html'), page.html, 'utf8');
+      }
+    } else {
+      await writeFile(path.join(out, 'index.html'), renderArtist(a, site, { all: artists }), 'utf8');
+    }
+
+    console.log(`  ${a.slug.padEnd(14)} ${CATEGORY_LABEL[a.category]} · ${a.type}안`
+      + `${a.multipage ? ' · 5쪽' : ''}${a.draft ? ' (시안)' : ''}`);
   }
 
   // 자체 페이지
@@ -150,7 +162,10 @@ async function main() {
   console.log(`  디자인 ${DESIGNS.length}종 · 미리보기 생성`);
 
   // 검색엔진용
-  const urls = ['', 'list/', 'designs/', 'apply/', ...artists.map((a) => `${a.slug}/`)];
+  const urls = ['', 'list/', 'designs/', 'apply/', ...artists.flatMap((a) =>
+    a.multipage
+      ? [`${a.slug}/`, ...['about', 'stage', 'gallery', 'contact'].map((k) => `${a.slug}/${k}/`)]
+      : [`${a.slug}/`])];
   await writeFile(path.join(dist, 'sitemap.xml'),
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
     urls.map((u) => `  <url><loc>${site.origin}/${u}</loc></url>`).join('\n') +

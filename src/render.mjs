@@ -252,20 +252,36 @@ const WORK_LABEL = {
   magician: '무대', singer: '노래', actor: '작품', band: '멤버',
 };
 
-function siteBar(artist, site) {
-  const menu = [
-    { href: '#about', label: '소개' },
-    (CATEGORY_BLOCKS[artist.category] || []).length
-      ? { href: '#work', label: WORK_LABEL[artist.category] || '활동' } : null,
-    (artist.shows || []).length ? { href: '#schedule', label: '일정' } : null,
-    { href: '#gallery', label: '갤러리' },
-    { href: '#contact', label: '섭외' },
-  ].filter(Boolean);
+/** 여러 페이지로 나눌 때 쓰는 차례. 한 장짜리는 같은 이름의 앵커로 간다. */
+export const SUB_PAGES = [
+  { key: 'about',   label: '소개',   anchor: '#about' },
+  { key: 'stage',   label: '무대',   anchor: '#work' },
+  { key: 'gallery', label: '갤러리', anchor: '#gallery' },
+  { key: 'contact', label: '섭외',   anchor: '#contact' },
+];
+
+function siteBar(artist, site, { page = null } = {}) {
+  const base = `/${artist.slug}/`;
+
+  const menu = artist.multipage
+    ? SUB_PAGES.map((s) => ({
+        href: base + s.key + '/',
+        label: s.key === 'stage' ? (WORK_LABEL[artist.category] || '무대') : s.label,
+        on: page === s.key,
+      }))
+    : [
+        { href: '#about', label: '소개' },
+        (CATEGORY_BLOCKS[artist.category] || []).length
+          ? { href: '#work', label: WORK_LABEL[artist.category] || '활동' } : null,
+        (artist.shows || []).length ? { href: '#schedule', label: '일정' } : null,
+        { href: '#gallery', label: '갤러리' },
+        { href: '#contact', label: '섭외' },
+      ].filter(Boolean);
 
   return `<header class="sitebar"><div class="wrap sitebar__in">
-    <a class="sitebar__me" href="#top">${esc(artist.nameMark || artist.name)}</a>
+    <a class="sitebar__me" href="${artist.multipage ? esc(base) : '#top'}">${esc(artist.nameMark || artist.name)}</a>
     <nav class="sitebar__nav" aria-label="페이지 안">
-      ${menu.map((m) => `<a href="${m.href}">${esc(m.label)}</a>`).join('')}
+      ${menu.map((m) => `<a href="${esc(m.href)}"${m.on ? ' aria-current="page"' : ''}>${esc(m.label)}</a>`).join('')}
     </nav>
     <a class="sitebar__home" href="/list/">${esc(site.brand)} 목록</a>
   </div></header>`;
@@ -368,11 +384,70 @@ const LAYOUTS = { A: layoutA, B: layoutB, C: layoutC };
 
 /* ---------- 한 장으로 ---------- */
 
-export function renderArtist(artist, site, opts = {}) {
-  const layout = LAYOUTS[artist.type] || layoutA;
+/* ---------- 여러 페이지로 나누기 ---------- */
+
+const DOOR_TEXT = {
+  about:   '어떤 사람이고 무엇을 해 왔는지',
+  stage:   '무대 구성과 소요 시간, 필요한 조건',
+  gallery: '무대에서 찍힌 사진들',
+  contact: '일정과 장소를 알려주시면 답해 드립니다',
+};
+
+/** 첫 화면에서 네 갈래로 보내는 칸. */
+function doors(artist) {
+  const base = `/${artist.slug}/`;
+  return `<div class="wrap"><section>
+    <p class="eye">Pages</p>
+    <h2>둘러보기</h2>
+    <div class="doors">
+      ${SUB_PAGES.map((s) => `<a href="${esc(base + s.key)}/">
+        <b>${esc(s.key === 'stage' ? (WORK_LABEL[artist.category] || '무대') : s.label)}</b>
+        <span>${esc(DOOR_TEXT[s.key])}</span>
+        <i>보기 →</i>
+      </a>`).join('')}
+    </div>
+  </section></div>`;
+}
+
+/**
+ * 한 아티스트를 다섯 장으로 나눈다 — 첫 화면 + 소개 · 무대 · 갤러리 · 섭외.
+ * 한 장짜리보다 「개인 홈페이지」처럼 읽힌다.
+ * @returns {{key:string, html:string}[]}  key 가 '' 이면 첫 화면이다.
+ */
+export function renderArtistPages(artist, site, opts = {}) {
+  const hero = artist.type === 'C' ? layoutC : artist.type === 'B' ? layoutB : layoutA;
+
+  // 첫 화면은 인사만 하고 나머지는 각 페이지로 보낸다
+  const homeHero = artist.type === 'A'
+    ? layoutA(artist).split('<div class="wrap"><section id="about">')[0]
+    : artist.type === 'B'
+      ? layoutB(artist).split('<div class="wrap"><section id="schedule"')[0]
+      : layoutC(artist).split('<div class="wrap"><section id="work"')[0];
+
+  const pages = [
+    { key: '', body: homeHero + doors(artist) },
+    { key: 'about', body: profileBlock(artist) + historyBlock(artist) },
+    { key: 'stage', body: catBlocks(artist) + scheduleBlock(artist) },
+    { key: 'gallery', body: galleryBlock(artist) },
+    { key: 'contact', body: contactBlock(artist, { form: true }) },
+  ];
+
+  return pages.map((p) => ({
+    key: p.key,
+    html: shellArtist(artist, site, {
+      ...opts,
+      page: p.key || null,
+      body: p.body || `<div class="wrap"><section><p class="lede">준비 중입니다.</p></section></div>`,
+      titleSuffix: p.key ? ' · ' + (SUB_PAGES.find((s) => s.key === p.key)?.label || '') : '',
+    }),
+  }));
+}
+
+/** 아티스트 페이지 한 장의 겉옷. 안에 들어갈 내용(body)만 갈아 끼운다. */
+function shellArtist(artist, site, opts = {}) {
   const design = designFor(artist);
   artist._sw = design.sw;   // 자리표 그림이 디자인 색을 쓰도록
-  const title = `${artist.name}${artist.role ? ' · ' + artist.role : ''}`;
+  const title = `${artist.name}${opts.titleSuffix || ''}${artist.role ? ' · ' + artist.role : ''}`;
   const desc = artist.summary || (artist.intro || [])[0] || `${artist.name} 공식 페이지`;
   const draftBar = artist.draft
     ? `<p class="draft">시안 · <b>사진은 실제 자료</b>, 이력과 세부 정보는 <b>채워 넣을 자리</b>입니다</p>`
@@ -403,8 +478,8 @@ ${design.css}</style>
 <body id="top">
 ${opts.preview ? previewBar(opts.preview, site) : ''}
 ${draftBar}
-${siteBar(artist, site)}
-${wrap(layout(artist) + (opts.preview ? '' : relatedBlock(artist, opts.all, site)))}
+${siteBar(artist, site, { page: opts.page })}
+${wrap(opts.body + (opts.preview || artist.multipage ? '' : relatedBlock(artist, opts.all, site)))}
 <p style="text-align:center;padding:20px;font-size:13px;color:var(--ivory-3);
   border-top:1px solid var(--line)">
   <a href="/" style="color:var(--ivory-3);text-decoration:none">${esc(site.brand)}</a>
@@ -420,4 +495,10 @@ ${LIGHTBOX_JS}
 ${design.js || ''}</script>
 </body>
 </html>`;
+}
+
+/** 한 장짜리 아티스트 페이지. */
+export function renderArtist(artist, site, opts = {}) {
+  const layout = LAYOUTS[artist.type] || layoutA;
+  return shellArtist(artist, site, { ...opts, body: layout(artist) });
 }

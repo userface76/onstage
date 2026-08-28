@@ -5,6 +5,7 @@
   "design": "OS-102",
   "order": 0,
   "draft": false,
+  "multipage": true,
 
   "name": "최정한",
   "nameMark": "Joseph Choi",

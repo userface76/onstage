@@ -126,6 +126,19 @@ td.n{font-family:var(--mono);font-size:13.5px;color:var(--ac);white-space:nowrap
 .sitebar__nav{display:flex;gap:20px;margin-left:8px}
 .sitebar__nav a{font-size:15px;color:var(--ivory-2);text-decoration:none}
 .sitebar__nav a:hover{color:var(--ac)}
+.sitebar__nav a[aria-current=page]{color:var(--ac);border-bottom:1px solid var(--ac);padding-bottom:2px}
+
+/* 여러 페이지로 나눈 사이트의 첫 화면에서 각 갈래로 보내는 칸 */
+.doors{display:grid;gap:12px;margin-top:26px}
+@media(min-width:700px){.doors{grid-template-columns:repeat(4,1fr)}}
+.doors a{display:flex;flex-direction:column;gap:5px;text-decoration:none;color:inherit;
+  border:1px solid var(--line);background:var(--night-2);padding:20px 18px}
+.doors a:hover{border-color:var(--ac)}
+.doors a:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.doors b{font-family:var(--display);font-weight:700;font-size:18px}
+.doors span{font-size:13.5px;color:var(--ivory-2);line-height:1.6}
+.doors i{font-style:normal;font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  color:var(--ac);margin-top:4px}
 .sitebar__home{margin-left:auto;font-family:var(--mono);font-size:12px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--ivory-3);text-decoration:none;
   border:1px solid var(--line);padding:7px 12px}
