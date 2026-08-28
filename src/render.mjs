@@ -375,6 +375,9 @@ export function renderArtist(artist, site, opts = {}) {
     ? `<p class="draft">시안 · <b>사진은 실제 자료</b>, 이력과 세부 정보는 <b>채워 넣을 자리</b>입니다</p>`
     : '';
 
+  // 연출 스크립트가 페이지 덩어리를 찾을 수 있게 감싼다
+  const wrap = (html) => `<div class="site">${html}</div>`;
+
   return `<!doctype html>
 <html lang="ko">
 <head>
@@ -398,8 +401,7 @@ ${design.css}</style>
 ${opts.preview ? previewBar(opts.preview, site) : ''}
 ${draftBar}
 ${siteBar(artist, site)}
-${layout(artist)}
-${opts.preview ? '' : relatedBlock(artist, opts.all, site)}
+${wrap(layout(artist) + (opts.preview ? '' : relatedBlock(artist, opts.all, site)))}
 <p style="text-align:center;padding:20px;font-size:13px;color:var(--ivory-3);
   border-top:1px solid var(--line)">
   <a href="/" style="color:var(--ivory-3);text-decoration:none">${esc(site.brand)}</a>
@@ -411,7 +413,8 @@ ${opts.preview ? '' : relatedBlock(artist, opts.all, site)}
   <a href="/#contact" style="color:var(--ivory-3);text-decoration:none">홈페이지 제작 문의</a>
 </p>
 <script>${INQUIRY_JS}
-${LIGHTBOX_JS}</script>
+${LIGHTBOX_JS}
+${design.js || ''}</script>
 </body>
 </html>`;
 }

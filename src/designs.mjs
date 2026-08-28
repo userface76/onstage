@@ -274,6 +274,132 @@ body{font-family:"Noto Sans KR",sans-serif}
   },
 ];
 
+/* ─────────── 프리미엄 ─────────── */
+
+/**
+ * 스크롤하면 한 덩어리씩 떠오르는 연출.
+ * 움직임을 싫어하는 설정을 켠 사람에게는 그냥 다 보이게 둔다.
+ */
+const REVEAL_JS = `
+(function () {
+  var q = document.querySelectorAll('.site section, .site .a-hero, .site .c-top, .site .b-band');
+  if (!q.length) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+  q.forEach(function (el) { el.classList.add('rv'); });
+  var io = new IntersectionObserver(function (rows) {
+    rows.forEach(function (r) {
+      if (r.isIntersecting) { r.target.classList.add('rv--on'); io.unobserve(r.target); }
+    });
+  }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
+  q.forEach(function (el) { io.observe(el); });
+})();
+`;
+
+DESIGNS.push({
+  code: 'OS-116', name: '시네마틱', for: '배우 · 영상 · 프리미엄', concept: '고급스러운',
+  light: false, premium: true,
+  js: REVEAL_JS,
+  css: `
+:root{--night:#08090B;--night-2:#0E1013;--night-3:#14171B;--line:#23272D;
+  --ivory:#F2EFE8;--ivory-2:#A8A69F;--ivory-3:#6E6C67;--ac:#D8CFBC;--ac-2:#6B6559}
+body{font-family:"Noto Sans KR",sans-serif;font-weight:300;line-height:1.9}
+
+/* 한 덩어리가 한 화면을 차지한다 — 훑는 것이 아니라 한 장씩 넘겨 보게 */
+section{padding:clamp(88px,16vh,190px) 0;border-top:0;position:relative}
+section::before{content:"";position:absolute;top:0;left:clamp(20px,5vw,48px);
+  right:clamp(20px,5vw,48px);height:1px;background:var(--line)}
+.site>div:first-of-type section:first-of-type::before{display:none}
+
+.eye{font-family:var(--mono);font-size:11px;letter-spacing:.5em;text-transform:uppercase;
+  color:var(--ivory-3);margin:0 0 26px;font-weight:400}
+h2{font-family:"Noto Sans KR",sans-serif;font-weight:200;letter-spacing:-.03em;
+  font-size:clamp(30px,6vw,64px);line-height:1.18;max-width:16ch}
+h3{font-weight:400;font-size:17px}
+.lede{font-size:clamp(16px,1.9vw,19px);line-height:2.05;color:var(--ivory-2);max-width:42ch}
+
+/* 첫 화면 — 사진을 화면 가득 깔고 글자를 얹는다 */
+.a-hero{grid-template-columns:1fr!important;min-height:92vh;align-content:end;
+  padding-bottom:clamp(56px,9vh,110px);position:relative;isolation:isolate}
+.a-hero>*{grid-area:1/1}
+.a-hero>div:first-child{align-self:end;z-index:2;position:relative}
+.a-shot{width:100%;height:100%;max-height:none!important;object-fit:cover;
+  position:absolute;inset:0;z-index:0;opacity:.5;
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 45%,transparent 100%);
+  mask-image:linear-gradient(180deg,#000 0%,#000 45%,transparent 100%)}
+.a-name{font-family:"Noto Sans KR",sans-serif;font-weight:100;
+  font-size:clamp(48px,13vw,150px);line-height:.94;letter-spacing:-.055em}
+.a-role{letter-spacing:.5em;font-size:11px;color:var(--ivory-3);margin-bottom:22px}
+.a-line{font-family:"Noto Sans KR",sans-serif;font-weight:200;
+  font-size:clamp(19px,3.2vw,34px);line-height:1.5;letter-spacing:-.02em;
+  margin-top:30px;max-width:18ch}
+
+/* 섭외 중심 배치도 같은 톤으로 */
+.c-top{background:transparent;border-bottom:0}
+.c-top .wrap{padding-top:clamp(64px,12vh,140px);padding-bottom:clamp(40px,7vh,90px)}
+.c-name{font-weight:100;font-family:"Noto Sans KR",sans-serif;
+  font-size:clamp(40px,8vw,92px);letter-spacing:-.05em;line-height:1}
+.c-sub{font-size:17px;line-height:1.9;max-width:34ch}
+.c-shot{max-height:340px;filter:grayscale(.35) contrast(1.05)}
+.b-band{background:transparent;border-bottom:0}
+.b-date{font-weight:100;letter-spacing:-.04em}
+
+/* 사실 칸 — 선만 남긴다 */
+.facts{border:0;background:transparent;gap:0}
+.facts>div{background:transparent;border-top:1px solid var(--line);padding:20px 0 20px 0}
+@media(min-width:620px){.facts>div{padding-right:24px}}
+.facts dt{letter-spacing:.28em;font-size:10px;color:var(--ivory-3)}
+.facts dd{font-weight:300;font-size:19px;letter-spacing:-.01em}
+
+/* 표 */
+.scroll{border:0}
+table{background:transparent}
+thead th{background:transparent;border-bottom:1px solid var(--line);
+  letter-spacing:.24em;font-size:10px;color:var(--ivory-3);padding-bottom:14px}
+td{border-bottom:1px solid var(--line);padding:20px 15px 20px 0}
+td.b{font-family:"Noto Sans KR",sans-serif;font-weight:300;font-size:19px;letter-spacing:-.02em}
+td.n{color:var(--ivory-2);font-size:13px;letter-spacing:.08em}
+
+/* 갤러리 — 크게, 흑백에서 색으로 */
+.gal{gap:2px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.gal>button{aspect-ratio:4/5;border:0;filter:grayscale(1) contrast(1.06);
+  transition:filter .5s ease,transform .5s ease}
+.gal>button:hover{filter:grayscale(0);transform:scale(1.012)}
+
+.rows>div{border-bottom:1px solid var(--line);padding:22px 2px}
+.rows .t{font-family:"Noto Sans KR",sans-serif;font-weight:300;font-size:20px;letter-spacing:-.02em}
+.rows .d{letter-spacing:.16em;font-size:12px;color:var(--ivory-3)}
+
+.btn{background:transparent;color:var(--ivory);border:1px solid var(--ac-2);
+  border-radius:0;font-weight:400;letter-spacing:.22em;font-size:12px;padding:18px 40px;
+  transition:background .35s ease,color .35s ease,border-color .35s ease}
+.btn:hover{background:var(--ivory);color:var(--night);border-color:var(--ivory)}
+.btn--ghost{border-color:var(--line)}
+.btn--big{padding:20px 48px}
+
+.cbar{border:0;background:transparent;border-top:1px solid var(--line);
+  padding:clamp(40px,7vh,80px) 0 0}
+.form{border:0;background:transparent;padding:0;gap:22px}
+.f input,.f textarea{background:transparent;border:0;border-bottom:1px solid var(--line);
+  padding:14px 0;font-weight:300}
+.f input:focus-visible,.f textarea:focus-visible{outline:0;border-bottom-color:var(--ivory)}
+.f label{letter-spacing:.24em;font-size:10px}
+
+.sitebar{background:rgba(8,9,11,.72);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.sitebar__me{font-family:"Noto Sans KR",sans-serif;font-weight:300;letter-spacing:.24em;font-size:15px}
+.sitebar__nav a{font-size:13px;letter-spacing:.12em;color:var(--ivory-3)}
+.sitebar__nav a:hover{color:var(--ivory)}
+
+.related a{background:transparent;border:0;border-top:1px solid var(--line);padding:22px 0}
+.related b{font-family:"Noto Sans KR",sans-serif;font-weight:300;font-size:21px;letter-spacing:-.02em}
+
+/* 떠오르는 연출 */
+.rv{opacity:0;transform:translateY(26px)}
+.rv--on{opacity:1;transform:none;transition:opacity 1.1s cubic-bezier(.2,.7,.2,1),transform 1.1s cubic-bezier(.2,.7,.2,1)}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}}
+`,
+});
+
 /**
  * 갤러리 카드에 쓰는 축소 견본.
  * 색과 글꼴만 있으면 그 디자인이 어떤 인상인지 카드 안에서 바로 보인다.
@@ -294,6 +420,7 @@ const SWATCH = {
   'OS-113': { bg:'#121214', ink:'#F0F0F2', ac:'#5CE1C4', font:'"Black Han Sans",sans-serif',w:400, ls:'-.025em'},
   'OS-114': { bg:'#FCFBF7', ink:'#1F1D18', ac:'#3E5C48', font:'"Noto Serif KR",serif',     w:900, ls:'-.01em' },
   'OS-115': { bg:'#141018', ink:'#F3EFF7', ac:'#FF5DA2', font:'"Noto Sans KR",sans-serif', w:900, ls:'-.035em'},
+  'OS-116': { bg:'#08090B', ink:'#F2EFE8', ac:'#D8CFBC', font:'"Noto Sans KR",sans-serif', w:100, ls:'-.055em'},
 };
 
 DESIGNS.forEach((d) => { d.sw = SWATCH[d.code]; });
