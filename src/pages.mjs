@@ -3,6 +3,7 @@
 import { css, FONTS } from './theme.mjs';
 import { esc, CATEGORY_LABEL } from './render.mjs';
 import { placeholder } from './placeholder.mjs';
+import { INQUIRY_JS } from './inquiry.mjs';
 
 const shell = (site, { title, desc, body, extra = '' }) => `<!doctype html>
 <html lang="ko">
@@ -123,6 +124,7 @@ ${extra}</style>
   <a class="sitebar__home" href="/#contact">제작 문의</a>
 </div></header>
 ${body}
+<script>${INQUIRY_JS}</script>
 </body>
 </html>`;
 
@@ -228,7 +230,7 @@ export function renderLanding(site, artists) {
     <div><h3>영상 · 음원</h3><span>유튜브 · 인스타 · 멜론 바로 재생</span></div>
     <div><h3>일정</h3><span>다가오는 무대와 지난 기록</span></div>
     <div><h3>직군별 표</h3><span>레퍼토리 · 필모그래피 · 대표곡</span></div>
-    <div><h3>섭외 문의폼</h3><span>들어온 문의는 메일과 문자로 동시 알림</span></div>
+    <div><h3>섭외 문의폼</h3><span>들어온 문의를 메일로 바로 알려드립니다</span></div>
     <div><h3>갤러리</h3><span>무대 사진, 포스터, 프로필 컷</span></div>
     <div><h3>모바일 최적화</h3><span>담당자 열에 아홉은 휴대폰으로 봅니다</span></div>
     <div><h3>검색 노출</h3><span>이름을 검색하면 공식 페이지가 먼저</span></div>
@@ -262,7 +264,7 @@ export function renderLanding(site, artists) {
       <span class="price__d">${esc(site.price.subNote)}</span>
       <ul>
         <li>주소와 서버 유지</li>
-        <li>섭외 문의 알림 — 메일 · 문자</li>
+        <li>섭외 문의 메일 알림</li>
         <li>사진과 일정 직접 수정</li>
         <li>디자인 교체 언제든 무료</li>
       </ul>
@@ -295,7 +297,7 @@ export function renderLanding(site, artists) {
     <details><summary>정말 10만원이면 끝인가요?</summary>
       <p>제작비는 10만원 한 번입니다. 이후에는 월 5천원만 내시면 됩니다. 도메인 비용(연 1~2만원)만 별도이고, 그 외에 나중에 더 청구하는 것은 없습니다.</p></details>
     <details><summary>월 5천원은 무엇에 쓰이나요?</summary>
-      <p>주소와 서버를 유지하고, 섭외 문의가 들어오면 메일과 문자로 알려드리는 비용입니다. 디자인을 바꾸고 싶으시면 그것도 이 안에 포함됩니다.</p></details>
+      <p>주소와 서버를 유지하고, 섭외 문의가 들어오면 메일로 알려드리는 비용입니다. 디자인을 바꾸고 싶으시면 그것도 이 안에 포함됩니다.</p></details>
     <details><summary>그만두면 어떻게 되나요?</summary>
       <p>그달로 끝입니다. 위약금이 없습니다. 도메인은 본인 명의라 다른 곳으로 옮겨 그대로 쓰실 수 있고, 내용도 파일로 드립니다.</p></details>
     <details><summary>제작 기간이 얼마나 걸리나요?</summary>
@@ -315,14 +317,21 @@ export function renderLanding(site, artists) {
   <p class="eye">문의하기</p>
   <h2>지금 활동 얘기부터 들려주세요</h2>
   <p class="lede" style="margin-top:8px">아직 결정하지 않으셨어도 괜찮습니다. 무엇이 필요한지부터 같이 정리해 드립니다.</p>
-  <form class="form" style="margin-top:24px" onsubmit="event.preventDefault();this.querySelector('.sent').hidden=false">
-    <div class="f"><label for="n">이름 · 활동명</label><input id="n" name="name" type="text" placeholder="예) 밴드 늦은고백"></div>
-    <div class="f"><label for="c">연락처</label><input id="c" name="contact" type="text" placeholder="전화 또는 이메일"></div>
-    <div class="f"><label for="g">직군</label><input id="g" name="category" type="text" placeholder="예) 트롯 가수 / 배우 / 마술사"></div>
-    <div class="f"><label for="r">활동 지역 · 빈도</label><input id="r" name="region" type="text" placeholder="예) 서울·경기, 월 3~4회"></div>
-    <div class="f f--full"><label for="m">하고 싶은 말</label><textarea id="m" name="message" placeholder="원하시는 것, 걱정되는 것 무엇이든"></textarea></div>
+  <form class="form js-inquiry" style="margin-top:24px">
+    <div class="f"><label for="n">이름 · 활동명</label>
+      <input id="n" name="name" type="text" required placeholder="예) 밴드 늦은고백"></div>
+    <div class="f"><label for="c">연락처</label>
+      <input id="c" name="contact" type="text" required placeholder="전화 또는 이메일"></div>
+    <div class="f"><label for="g">직군</label>
+      <input id="g" name="category" type="text" placeholder="예) 트롯 가수 / 배우 / 마술사"></div>
+    <div class="f"><label for="r">활동 지역 · 빈도</label>
+      <input id="r" name="region" type="text" placeholder="예) 서울·경기, 월 3~4회"></div>
+    <div class="f f--full"><label for="m">하고 싶은 말</label>
+      <textarea id="m" name="message" placeholder="원하시는 것, 걱정되는 것 무엇이든"></textarea></div>
+    <div class="f f--full" aria-hidden="true" style="position:absolute;left:-9999px">
+      <label for="co">회사</label><input id="co" name="company" type="text" tabindex="-1" autocomplete="off"></div>
     <div class="f f--full"><button class="btn" type="submit">문의 보내기</button>
-      <p class="sent" hidden style="color:var(--ac);font-size:14px;margin-top:10px">보내기 연결은 오픈 시 붙습니다.</p></div>
+      <p class="js-msg" hidden style="font-size:14.5px;margin-top:10px"></p></div>
   </form>
   <div class="sfoot"><span class="mark">${esc(site.brand)}</span><span>${esc(site.tagline)}</span></div>
 </section></div>`;

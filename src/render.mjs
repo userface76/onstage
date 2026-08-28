@@ -12,6 +12,7 @@
 import { css } from './theme.mjs';
 import { placeholder } from './placeholder.mjs';
 import { designFor, FONT_HREF } from './designs.mjs';
+import { INQUIRY_JS } from './inquiry.mjs';
 
 /* ---------- 도구 ---------- */
 
@@ -125,13 +126,20 @@ function contactBlock(artist, { form = false } = {}) {
   const c = artist.contact || {};
   const links = ['instagram', 'youtube', 'kakao'].filter((k) => has(c[k]))
     .map((k) => `<a href="${esc(c[k])}">${k[0].toUpperCase() + k.slice(1)}</a>`).join(' · ');
-  const formHtml = form ? `<form class="form" style="margin-top:20px" onsubmit="event.preventDefault();this.querySelector('.sent').hidden=false">
-      <div class="f"><label for="org">단체 · 담당자</label><input id="org" name="org" type="text" placeholder="예) ○○문화재단 김○○"></div>
-      <div class="f"><label for="tel">연락처</label><input id="tel" name="tel" type="text" placeholder="전화 또는 이메일"></div>
-      <div class="f f--full"><label for="when">행사일 · 장소</label><input id="when" name="when" type="text" placeholder="예) 12월 14일, 성남아트센터"></div>
-      <div class="f f--full"><label for="msg">문의 내용</label><textarea id="msg" name="msg" placeholder="예상 인원, 원하시는 구성 시간 등"></textarea></div>
+  const formHtml = form ? `<form class="form js-inquiry" style="margin-top:20px"
+      data-artist="${esc(artist.name)}">
+      <div class="f"><label for="name">단체 · 담당자</label>
+        <input id="name" name="name" type="text" required placeholder="예) ○○문화재단 김○○"></div>
+      <div class="f"><label for="contact">연락처</label>
+        <input id="contact" name="contact" type="text" required placeholder="전화 또는 이메일"></div>
+      <div class="f f--full"><label for="when">행사일 · 장소</label>
+        <input id="when" name="when" type="text" placeholder="예) 12월 14일, 성남아트센터"></div>
+      <div class="f f--full"><label for="message">문의 내용</label>
+        <textarea id="message" name="message" placeholder="예상 인원, 원하시는 구성 시간 등"></textarea></div>
+      <div class="f f--full" aria-hidden="true" style="position:absolute;left:-9999px">
+        <label for="company">회사</label><input id="company" name="company" type="text" tabindex="-1" autocomplete="off"></div>
       <div class="f f--full"><button class="btn" type="submit">문의 보내기</button>
-        <p class="sent" hidden style="color:var(--ac);font-size:14px;margin-top:10px">보내기 연결은 오픈 시 붙습니다.</p></div>
+        <p class="js-msg" hidden style="font-size:14.5px;margin-top:10px"></p></div>
     </form>` : '';
   return `<div class="wrap"><section id="contact">
     <div class="cbar">
@@ -394,6 +402,7 @@ ${opts.preview ? '' : relatedBlock(artist, opts.all, site)}
   <span style="opacity:.5"> · </span>
   <a href="/#contact" style="color:var(--ivory-3);text-decoration:none">홈페이지 제작 문의</a>
 </p>
+<script>${INQUIRY_JS}</script>
 </body>
 </html>`;
 }
