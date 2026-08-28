@@ -1,0 +1,17 @@
+{
+  // Cloudflare Workers 설정.
+  // 정적 파일은 dist 에서 나가고, /api/* 만 worker/index.js 가 받는다.
+  // Pages 가 아니라 Workers 프로젝트라 functions/ 규약이 통하지 않아 이 파일이 필요하다.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "onstage",
+  "main": "worker/index.js",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
