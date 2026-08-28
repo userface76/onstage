@@ -40,6 +40,42 @@ function seedOf(s = '') {
   return Math.abs(h);
 }
 
+/* ── 색 다루기 — 디자인이 준 색 하나로 배경 두 단계와 빛을 만든다 ── */
+
+const toRgb = (hex) => {
+  const h = hex.replace('#', '');
+  const n = h.length === 3 ? h.split('').map((c) => c + c).join('') : h;
+  return [0, 2, 4].map((i) => parseInt(n.slice(i, i + 2), 16));
+};
+const toHex = (rgb) =>
+  '#' + rgb.map((v) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('');
+/** t 가 양수면 흰쪽, 음수면 검은쪽으로 옮긴다. */
+const shade = (hex, t) => {
+  const target = t > 0 ? 255 : 0;
+  const k = Math.abs(t);
+  return toHex(toRgb(hex).map((v) => v + (target - v) * k));
+};
+const isLight = (hex) => {
+  const [r, g, b] = toRgb(hex);
+  return (r * 299 + g * 587 + b * 114) / 1000 > 150;
+};
+
+/**
+ * 디자인이 { bg, ink, ac } 만 줘도 그림에 필요한 색을 채워 준다.
+ * 밝은 바탕이면 인물을 진하게, 어두운 바탕이면 옅게 잡아 어느 쪽에서도 읽힌다.
+ */
+function fromDesign(c) {
+  if (!c || !c.bg) return c;
+  const light = isLight(c.bg);
+  return {
+    bg1: light ? shade(c.bg, 0.35) : shade(c.bg, 0.10),
+    bg2: light ? shade(c.bg, -0.04) : shade(c.bg, -0.35),
+    ac: c.ac,
+    ink: light ? shade(c.ink, 0.06) : shade(c.ink, -0.35),
+    glow: light ? shade(c.ac, 0.45) : shade(c.ac, 0.30),
+  };
+}
+
 /* ── 캐릭터 한 사람. viewBox 0 0 100 120, 발끝이 y=120 ── */
 
 function character({ ac, ink, prop, v }) {
@@ -163,7 +199,7 @@ function crowd({ count, prop, n, w, h, kind }) {
 export function placeholder({
   category = 'default', kind = 'hero', seed = '', count, prop, colors,
 } = {}) {
-  const p = { ...(PALETTE[category] || PALETTE.default), ...(colors || {}) };
+  const p = { ...(PALETTE[category] || PALETTE.default), ...(fromDesign(colors) || colors || {}) };
   const [w, h] = RATIO[kind] || RATIO.hero;
 
   const n = seedOf(seed + kind);

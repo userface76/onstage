@@ -298,12 +298,16 @@ const REVEAL_JS = `
 
 DESIGNS.push({
   code: 'OS-116', name: '시네마틱', for: '배우 · 영상 · 프리미엄', concept: '고급스러운',
-  light: false, premium: true,
+  light: true, premium: true,
   js: REVEAL_JS,
   css: `
-:root{--night:#08090B;--night-2:#0E1013;--night-3:#14171B;--line:#23272D;
-  --ivory:#F2EFE8;--ivory-2:#A8A69F;--ivory-3:#6E6C67;--ac:#D8CFBC;--ac-2:#6B6559}
+/* 밝은 상아빛 바탕 · 감청색 글자 · 금색 강조.
+   금색은 선과 작은 표시에만 쓴다 — 넓게 깔면 촌스러워진다. */
+:root{--night:#FBF9F4;--night-2:#F4F1E9;--night-3:#EDE9DE;--line:#DED7C6;
+  --ivory:#14203A;--ivory-2:#4B5A78;--ivory-3:#8B93A5;--ac:#A8842C;--ac-2:#C9B27A;
+  --blue:#1B3A6B}
 body{font-family:"Noto Sans KR",sans-serif;font-weight:300;line-height:1.9}
+.btn{color:var(--night)}
 
 /* 한 덩어리가 한 화면을 차지한다 — 훑는 것이 아니라 한 장씩 넘겨 보게 */
 section{padding:clamp(88px,16vh,190px) 0;border-top:0;position:relative}
@@ -312,9 +316,9 @@ section::before{content:"";position:absolute;top:0;left:clamp(20px,5vw,48px);
 .site>div:first-of-type section:first-of-type::before{display:none}
 
 .eye{font-family:var(--mono);font-size:11px;letter-spacing:.5em;text-transform:uppercase;
-  color:var(--ivory-3);margin:0 0 26px;font-weight:400}
+  color:var(--ac);margin:0 0 26px;font-weight:500}
 h2{font-family:"Noto Sans KR",sans-serif;font-weight:200;letter-spacing:-.03em;
-  font-size:clamp(30px,6vw,64px);line-height:1.18;max-width:16ch}
+  font-size:clamp(30px,6vw,64px);line-height:1.18;max-width:16ch;color:var(--blue)}
 h3{font-weight:400;font-size:17px}
 .lede{font-size:clamp(16px,1.9vw,19px);line-height:2.05;color:var(--ivory-2);max-width:42ch}
 
@@ -324,74 +328,86 @@ h3{font-weight:400;font-size:17px}
 .a-hero>*{grid-area:1/1}
 .a-hero>div:first-child{align-self:end;z-index:2;position:relative}
 .a-shot{width:100%;height:100%;max-height:none!important;object-fit:cover;
-  position:absolute;inset:0;z-index:0;opacity:.5;
-  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 45%,transparent 100%);
-  mask-image:linear-gradient(180deg,#000 0%,#000 45%,transparent 100%)}
-.a-name{font-family:"Noto Sans KR",sans-serif;font-weight:100;
+  position:absolute;inset:0;z-index:0;
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 40%,transparent 92%);
+  mask-image:linear-gradient(180deg,#000 0%,#000 40%,transparent 92%)}
+/* 사진 위에 상아빛 막을 한 겹 — 글자가 어디에 놓여도 읽힌다 */
+.a-hero::after{content:"";grid-area:1/1;z-index:1;
+  background:linear-gradient(180deg,rgba(251,249,244,.30) 0%,rgba(251,249,244,.72) 58%,var(--night) 96%)}
+.a-name{font-family:"Noto Sans KR",sans-serif;font-weight:100;color:var(--blue);
   font-size:clamp(48px,13vw,150px);line-height:.94;letter-spacing:-.055em}
-.a-role{letter-spacing:.5em;font-size:11px;color:var(--ivory-3);margin-bottom:22px}
-.a-line{font-family:"Noto Sans KR",sans-serif;font-weight:200;
+.a-role{letter-spacing:.5em;font-size:11px;color:var(--ac);margin-bottom:22px;font-weight:500}
+.a-line{font-family:"Noto Sans KR",sans-serif;font-weight:200;color:var(--blue);
   font-size:clamp(19px,3.2vw,34px);line-height:1.5;letter-spacing:-.02em;
   margin-top:30px;max-width:18ch}
 
 /* 섭외 중심 배치도 같은 톤으로 */
 .c-top{background:transparent;border-bottom:0}
 .c-top .wrap{padding-top:clamp(64px,12vh,140px);padding-bottom:clamp(40px,7vh,90px)}
-.c-name{font-weight:100;font-family:"Noto Sans KR",sans-serif;
+.c-name{font-weight:100;font-family:"Noto Sans KR",sans-serif;color:var(--blue);
   font-size:clamp(40px,8vw,92px);letter-spacing:-.05em;line-height:1}
 .c-sub{font-size:17px;line-height:1.9;max-width:34ch}
-.c-shot{max-height:340px;filter:grayscale(.35) contrast(1.05)}
+.c-shot{max-height:340px;filter:contrast(1.02)}
 .b-band{background:transparent;border-bottom:0}
-.b-date{font-weight:100;letter-spacing:-.04em}
+.b-date{font-weight:100;letter-spacing:-.04em;color:var(--blue)}
 
-/* 사실 칸 — 선만 남긴다 */
+/* 사실 칸 — 금색 선만 남긴다 */
 .facts{border:0;background:transparent;gap:0}
-.facts>div{background:transparent;border-top:1px solid var(--line);padding:20px 0 20px 0}
+.facts>div{background:transparent;border-top:1px solid var(--ac-2);padding:20px 0 20px 0}
 @media(min-width:620px){.facts>div{padding-right:24px}}
-.facts dt{letter-spacing:.28em;font-size:10px;color:var(--ivory-3)}
-.facts dd{font-weight:300;font-size:19px;letter-spacing:-.01em}
+.facts dt{letter-spacing:.28em;font-size:10px;color:var(--ac)}
+.facts dd{font-weight:300;font-size:19px;letter-spacing:-.01em;color:var(--blue)}
 
 /* 표 */
 .scroll{border:0}
 table{background:transparent}
-thead th{background:transparent;border-bottom:1px solid var(--line);
-  letter-spacing:.24em;font-size:10px;color:var(--ivory-3);padding-bottom:14px}
+thead th{background:transparent;border-bottom:1px solid var(--ac-2);
+  letter-spacing:.24em;font-size:10px;color:var(--ac);padding-bottom:14px}
 td{border-bottom:1px solid var(--line);padding:20px 15px 20px 0}
-td.b{font-family:"Noto Sans KR",sans-serif;font-weight:300;font-size:19px;letter-spacing:-.02em}
-td.n{color:var(--ivory-2);font-size:13px;letter-spacing:.08em}
+td.b{font-family:"Noto Sans KR",sans-serif;font-weight:300;font-size:19px;
+  letter-spacing:-.02em;color:var(--blue)}
+td.n{color:var(--ac);font-size:13px;letter-spacing:.08em}
 
-/* 갤러리 — 크게, 흑백에서 색으로 */
+/* 갤러리 — 크게, 흐린 데서 또렷하게 */
 .gal{gap:2px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
-.gal>button{aspect-ratio:4/5;border:0;filter:grayscale(1) contrast(1.06);
+.gal>button{aspect-ratio:4/5;border:0;filter:saturate(.55) contrast(1.02);
   transition:filter .5s ease,transform .5s ease}
-.gal>button:hover{filter:grayscale(0);transform:scale(1.012)}
+.gal>button:hover{filter:saturate(1) contrast(1.04);transform:scale(1.012)}
 
 .rows>div{border-bottom:1px solid var(--line);padding:22px 2px}
-.rows .t{font-family:"Noto Sans KR",sans-serif;font-weight:300;font-size:20px;letter-spacing:-.02em}
-.rows .d{letter-spacing:.16em;font-size:12px;color:var(--ivory-3)}
+.rows .t{font-family:"Noto Sans KR",sans-serif;font-weight:300;font-size:20px;
+  letter-spacing:-.02em;color:var(--blue)}
+.rows .d{letter-spacing:.16em;font-size:12px;color:var(--ac)}
 
-.btn{background:transparent;color:var(--ivory);border:1px solid var(--ac-2);
+.btn{background:transparent;color:var(--blue);border:1px solid var(--ac);
   border-radius:0;font-weight:400;letter-spacing:.22em;font-size:12px;padding:18px 40px;
   transition:background .35s ease,color .35s ease,border-color .35s ease}
-.btn:hover{background:var(--ivory);color:var(--night);border-color:var(--ivory)}
-.btn--ghost{border-color:var(--line)}
+.btn:hover{background:var(--blue);color:var(--night);border-color:var(--blue)}
+.btn--ghost{border-color:var(--line);color:var(--ivory-2)}
 .btn--big{padding:20px 48px}
 
-.cbar{border:0;background:transparent;border-top:1px solid var(--line);
+.cbar{border:0;background:transparent;border-top:1px solid var(--ac-2);
   padding:clamp(40px,7vh,80px) 0 0}
 .form{border:0;background:transparent;padding:0;gap:22px}
 .f input,.f textarea{background:transparent;border:0;border-bottom:1px solid var(--line);
   padding:14px 0;font-weight:300}
-.f input:focus-visible,.f textarea:focus-visible{outline:0;border-bottom-color:var(--ivory)}
-.f label{letter-spacing:.24em;font-size:10px}
+.f input:focus-visible,.f textarea:focus-visible{outline:0;border-bottom-color:var(--ac)}
+.f label{letter-spacing:.24em;font-size:10px;color:var(--ac)}
 
-.sitebar{background:rgba(8,9,11,.72);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-.sitebar__me{font-family:"Noto Sans KR",sans-serif;font-weight:300;letter-spacing:.24em;font-size:15px}
-.sitebar__nav a{font-size:13px;letter-spacing:.12em;color:var(--ivory-3)}
-.sitebar__nav a:hover{color:var(--ivory)}
+.sitebar{background:rgba(251,249,244,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--ac-2)}
+.sitebar__me{font-family:"Noto Sans KR",sans-serif;font-weight:300;letter-spacing:.24em;
+  font-size:15px;color:var(--blue)}
+.sitebar__nav a{font-size:13px;letter-spacing:.12em;color:var(--ivory-2)}
+.sitebar__nav a:hover{color:var(--ac)}
+.sitebar__home{border-color:var(--ac-2);color:var(--ac)}
 
 .related a{background:transparent;border:0;border-top:1px solid var(--line);padding:22px 0}
-.related b{font-family:"Noto Sans KR",sans-serif;font-weight:300;font-size:21px;letter-spacing:-.02em}
+.related b{font-family:"Noto Sans KR",sans-serif;font-weight:300;font-size:21px;
+  letter-spacing:-.02em;color:var(--blue)}
+.fill{background:rgba(168,132,44,.06);border-color:var(--ac-2)}
+.draft{background:var(--night-2);color:var(--ivory-2)}
+.mark{color:var(--blue)}
 
 /* 떠오르는 연출 */
 .rv{opacity:0;transform:translateY(26px)}
@@ -420,7 +436,7 @@ const SWATCH = {
   'OS-113': { bg:'#121214', ink:'#F0F0F2', ac:'#5CE1C4', font:'"Black Han Sans",sans-serif',w:400, ls:'-.025em'},
   'OS-114': { bg:'#FCFBF7', ink:'#1F1D18', ac:'#3E5C48', font:'"Noto Serif KR",serif',     w:900, ls:'-.01em' },
   'OS-115': { bg:'#141018', ink:'#F3EFF7', ac:'#FF5DA2', font:'"Noto Sans KR",sans-serif', w:900, ls:'-.035em'},
-  'OS-116': { bg:'#08090B', ink:'#F2EFE8', ac:'#D8CFBC', font:'"Noto Sans KR",sans-serif', w:100, ls:'-.055em'},
+  'OS-116': { bg:'#FBF9F4', ink:'#14203A', ac:'#A8842C', font:'"Noto Sans KR",sans-serif', w:100, ls:'-.055em'},
 };
 
 DESIGNS.forEach((d) => { d.sw = SWATCH[d.code]; });

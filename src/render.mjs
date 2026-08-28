@@ -48,6 +48,8 @@ function pic(a, kind, i = 0) {
   return placeholder({
     category: a.category, kind, seed: `${a.slug}-${kind}-${i}`,
     count: art.count, prop: art.prop,
+    // 사진이 없을 때 그리는 그림도 그 페이지의 디자인 색을 따라간다
+    colors: a._sw,
   });
 }
 
@@ -369,6 +371,7 @@ const LAYOUTS = { A: layoutA, B: layoutB, C: layoutC };
 export function renderArtist(artist, site, opts = {}) {
   const layout = LAYOUTS[artist.type] || layoutA;
   const design = designFor(artist);
+  artist._sw = design.sw;   // 자리표 그림이 디자인 색을 쓰도록
   const title = `${artist.name}${artist.role ? ' · ' + artist.role : ''}`;
   const desc = artist.summary || (artist.intro || [])[0] || `${artist.name} 공식 페이지`;
   const draftBar = artist.draft
