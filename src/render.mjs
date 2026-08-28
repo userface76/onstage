@@ -81,10 +81,11 @@ function profileBlock(artist) {
 }
 
 function galleryBlock(artist) {
-  const cells = [];
-  for (let i = 0; i < 4; i++) {
-    cells.push(`<div style="background-image:url(&quot;${esc(pic(artist, 'gallery', i))}&quot;)"></div>`);
-  }
+  // 사진이 있으면 있는 만큼 전부 건다 — 개수 제한이 없다.
+  // 한 장도 없으면 캐릭터 그림 넉 장으로 채운다.
+  const shots = artist.photos?.gallery || [];
+  const cells = (shots.length ? shots : [0, 1, 2, 3])
+    .map((_, i) => `<div style="background-image:url(&quot;${esc(pic(artist, 'gallery', i))}&quot;)"></div>`);
   return `<div class="wrap"><section id="gallery">
     <p class="eye">Gallery</p>
     <h2>${esc(artist.galleryTitle || '무대에서')}</h2>

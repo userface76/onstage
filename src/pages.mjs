@@ -16,6 +16,28 @@ const shell = (site, { title, desc, body, extra = '' }) => `<!doctype html>
 <meta property="og:description" content="${esc(desc)}">
 ${FONTS}
 <style>${css('gold')}
+/* ── 온스테이지 자체 페이지는 밝은 화면으로 간다.
+      아티스트 페이지는 각자의 디자인을 따르므로 여기 영향을 받지 않는다. ── */
+:root{
+  --night:#F7F7F9; --night-2:#FFFFFF; --night-3:#F0F0F4; --line:#E3E3E9;
+  --ivory:#16161C; --ivory-2:#565662; --ivory-3:#8C8C97;
+  --ac:#2C5F4A; --ac-2:#A9C6B8;
+}
+body{-webkit-font-smoothing:auto}
+.sitebar{background:#FFFFFF;border-bottom:1px solid var(--line)}
+.cbar{background:#F1F6F3;border-color:#CFE0D7}
+.fill{background:#F1F6F3;border-color:#CFE0D7}
+.f input,.f textarea{background:#FFFFFF}
+.form{box-shadow:0 1px 2px rgba(22,22,28,.04),0 10px 28px rgba(22,22,28,.05)}
+.price__col{box-shadow:0 1px 2px rgba(22,22,28,.04),0 10px 28px rgba(22,22,28,.05)}
+.price__col--sub{background:#F1F6F3;border-color:#CFE0D7}
+.card,.dcard{box-shadow:0 1px 2px rgba(22,22,28,.04),0 8px 22px rgba(22,22,28,.05)}
+.card:hover,.dcard:hover{border-color:var(--ac)}
+.chip{background:#F0F0F4}
+.chip--on{background:#F1F6F3;color:var(--ac)}
+.btn--ghost{border-color:var(--ivory);color:var(--ivory)}
+.plan__flag,.badge{color:#FFFFFF}
+thead th{background:#F0F0F4}
 .bar{padding:24px 0 0;display:flex;align-items:baseline;gap:12px}
 .brand{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:.04em}
 .brand b{color:var(--ac);font-weight:400}
@@ -344,11 +366,29 @@ export function renderLanding(site, artists) {
 export function renderDesigns(site, designs) {
   const concepts = [...new Set(designs.map((d) => d.concept))];
 
-  const cards = designs.map((d) => `<a class="dcard" href="/designs/${esc(d.code)}/">
-      <span class="dcard__sw" style="background:${d.light ? '#F4F4F1' : '#121214'}">
-        <i style="background:${d.light ? '#1C1C1A' : '#F0F0F2'}"></i>
-        <i style="background:var(--ac)"></i>
+  // 카드 안에 그 디자인의 색과 글꼴로 축소 견본을 그린다 — 코드만 보고는 고를 수 없다.
+  // 캐릭터 그림도 같은 색을 입어서, 실제 페이지가 어떻게 보일지 그대로 드러난다.
+  const mini = (d) => {
+    const s = d.sw || { bg: '#EEE', ink: '#222', ac: '#888', font: 'sans-serif', w: 700, ls: '0' };
+    const art = placeholder({
+      category: 'magician', kind: 'square', seed: d.code, prop: 'hat',
+      colors: { bg1: s.bg, bg2: s.bg, ac: s.ac, ink: s.ink, glow: s.ac },
+    });
+    return `<span class="mini" style="background:${s.bg};color:${s.ink}">
+      <span class="mini__txt">
+        <span class="mini__eye" style="color:${s.ac}">${esc(d.concept)}</span>
+        <span class="mini__name" style="font-family:${s.font};font-weight:${s.w};letter-spacing:${s.ls}">홍길동</span>
+        <span class="mini__bars">
+          <i style="background:${s.ink}"></i><i style="background:${s.ink}"></i>
+        </span>
+        <span class="mini__btn" style="background:${s.ac};color:${s.bg}">섭외 문의</span>
       </span>
+      <span class="mini__art" style="background-image:url(&quot;${esc(art)}&quot;)"></span>
+    </span>`;
+  };
+
+  const cards = designs.map((d) => `<a class="dcard" href="/designs/${esc(d.code)}/">
+      ${mini(d)}
       <span class="dcard__in">
         <span class="dcard__code">${esc(d.code)}</span>
         <span class="dcard__name">${esc(d.name)}</span>
@@ -387,9 +427,18 @@ export function renderDesigns(site, designs) {
   display:flex;flex-direction:column}
 .dcard:hover{border-color:var(--ac-2)}
 .dcard:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-.dcard__sw{aspect-ratio:16/9;display:flex;align-items:flex-end;gap:8px;padding:16px;
-  border-bottom:1px solid var(--line)}
-.dcard__sw i{display:block;width:34px;height:34px;border-radius:50%}
+.mini{aspect-ratio:4/3;border-bottom:1px solid var(--line);overflow:hidden;
+  display:grid;grid-template-columns:1fr 42%}
+.mini__txt{padding:18px 0 18px 20px;display:flex;flex-direction:column;gap:7px;justify-content:center;min-width:0}
+.mini__art{background-position:bottom center;background-size:cover;background-repeat:no-repeat}
+.mini__eye{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase}
+.mini__name{font-size:clamp(24px,3.6vw,30px);line-height:1.05;white-space:nowrap}
+.mini__bars{display:flex;flex-direction:column;gap:4px;margin-top:2px}
+.mini__bars i{display:block;height:3px;border-radius:2px;opacity:.28}
+.mini__bars i:nth-child(1){width:82%}
+.mini__bars i:nth-child(2){width:58%}
+.mini__btn{align-self:flex-start;margin-top:6px;font-size:10.5px;font-weight:700;
+  padding:5px 11px;letter-spacing:.02em}
 .dcard__in{padding:16px 18px 18px;display:flex;flex-direction:column;gap:5px}
 .dcard__code{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;color:var(--ac);font-weight:500}
 .dcard__name{font-family:var(--display);font-weight:700;font-size:20px}

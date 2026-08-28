@@ -81,8 +81,9 @@ td.b{font-weight:700;font-family:var(--display);font-size:16.5px}
 td.n{font-family:var(--mono);font-size:13.5px;color:var(--ac);white-space:nowrap}
 
 /* 갤러리 */
-.gal{display:grid;gap:9px;grid-template-columns:repeat(2,1fr)}
-@media(min-width:760px){.gal{grid-template-columns:repeat(4,1fr)}}
+/* 사진이 몇 장이든 받는다 — 화면 폭에 맞춰 줄이 늘어난다 */
+.gal{display:grid;gap:9px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+@media(min-width:760px){.gal{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}}
 .gal>div{aspect-ratio:3/4;border:1px solid var(--line);background:var(--night-2) center/cover no-repeat;
   display:grid;place-items:center;font-family:var(--mono);font-size:9.5px;
   letter-spacing:.16em;color:var(--ivory-3)}

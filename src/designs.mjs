@@ -274,6 +274,30 @@ body{font-family:"Noto Sans KR",sans-serif}
   },
 ];
 
+/**
+ * 갤러리 카드에 쓰는 축소 견본.
+ * 색과 글꼴만 있으면 그 디자인이 어떤 인상인지 카드 안에서 바로 보인다.
+ */
+const SWATCH = {
+  'OS-101': { bg:'#FBFBFC', ink:'#15151A', ac:'#15151A', font:'"Noto Sans KR",sans-serif', w:100, ls:'-.03em' },
+  'OS-102': { bg:'#08080A', ink:'#F2EFE9', ac:'#C9A96A', font:'"Nanum Myeongjo",serif',   w:800, ls:'.03em'  },
+  'OS-103': { bg:'#F0EDE6', ink:'#1A1815', ac:'#8C2E2E', font:'"Song Myung",serif',        w:400, ls:'-.03em' },
+  'OS-104': { bg:'#F6F1E4', ink:'#221E17', ac:'#A32B23', font:'"Gowun Batang",serif',      w:700, ls:'.02em'  },
+  'OS-105': { bg:'#101010', ink:'#F5F5F0', ac:'#E8FF52', font:'"Black Han Sans",sans-serif',w:400, ls:'-.035em'},
+  'OS-106': { bg:'#FFFFFF', ink:'#111111', ac:'#111111', font:'"Noto Sans KR",sans-serif', w:300, ls:'.12em'  },
+  'OS-107': { bg:'#0A0A0A', ink:'#F4F4F4', ac:'#FF3B1F', font:'"Noto Sans KR",sans-serif', w:900, ls:'-.06em' },
+  'OS-108': { bg:'#F4F4F1', ink:'#1C1C1A', ac:'#1C1C1A', font:'"IBM Plex Mono",monospace', w:500, ls:'-.02em' },
+  'OS-109': { bg:'#0B0A09', ink:'#EFE9DF', ac:'#B08D57', font:'"Noto Serif KR",serif',     w:900, ls:'.06em'  },
+  'OS-110': { bg:'#FDF8F4', ink:'#3A2E2A', ac:'#E38B6D', font:'"Gowun Dodum",sans-serif',  w:400, ls:'-.01em' },
+  'OS-111': { bg:'#060607', ink:'#EDEDEF', ac:'#D8D8DC', font:'"Noto Sans KR",sans-serif', w:200, ls:'.24em'  },
+  'OS-112': { bg:'#170A0D', ink:'#F4E9E4', ac:'#D9A441', font:'"Gowun Batang",serif',      w:700, ls:'.05em'  },
+  'OS-113': { bg:'#121214', ink:'#F0F0F2', ac:'#5CE1C4', font:'"Black Han Sans",sans-serif',w:400, ls:'-.025em'},
+  'OS-114': { bg:'#FCFBF7', ink:'#1F1D18', ac:'#3E5C48', font:'"Noto Serif KR",serif',     w:900, ls:'-.01em' },
+  'OS-115': { bg:'#141018', ink:'#F3EFF7', ac:'#FF5DA2', font:'"Noto Sans KR",sans-serif', w:900, ls:'-.035em'},
+};
+
+DESIGNS.forEach((d) => { d.sw = SWATCH[d.code]; });
+
 export const DESIGN_MAP = Object.fromEntries(DESIGNS.map((d) => [d.code, d]));
 
 /** 직군이 정해지면 기본으로 붙는 디자인. JSON 에서 design 을 적으면 그쪽이 이긴다. */

@@ -21,7 +21,14 @@
     "hero": "hero.jpg",
     "portrait": "portrait.png",
     "card": "hero.jpg",
-    "gallery": ["hero.jpg"]
+    "_안내": "gallery 는 몇 장이든 넣을 수 있다. public/artists/hwanghwi/ 에 파일을 두고 이름만 줄줄이 적으면 된다.",
+    "gallery": [
+      "hero.jpg",
+      "stage-02.png",
+      "stage-03.png",
+      "stage-01.png",
+      "stage-04.png"
+    ]
   },
 
   "facts": {

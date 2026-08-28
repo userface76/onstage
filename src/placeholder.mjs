@@ -1,77 +1,29 @@
 /**
- * 직군별 가상 이미지.
+ * 직군별 캐릭터 그림.
  *
- * 사람 얼굴을 지어내지 않는다 — 실존 인물로 오해되면 안 되고, 만들어낸 얼굴은 금세 티가 난다.
- * 대신 무대 조명 아래 선 인물의 실루엣을 그린다. 공연 포스터가 오래 써 온 방식이다.
+ * 실제 인물 사진을 지어내지 않는다 — 대신 누가 봐도 그림인 캐릭터를 그린다.
+ * 얼굴은 점 두 개와 웃는 입뿐이라 특정인으로 오해될 수 없고,
+ * 만화라는 것이 분명해서 「사진이 없다」로 읽히지 않는다.
  *
- * 아티스트 JSON 의 art 로 조정한다.
+ * 색은 디자인에서 받아 쓴다. 같은 캐릭터가 디자인마다 다른 옷을 입는다.
+ *
+ * 아티스트 JSON:
  *   "art": { "count": 5, "prop": "hat" }
- * count 는 인원수(1~6), prop 은 손에 든 것.  없으면 직군 기본값을 쓴다.
- * 같은 사람은 늘 같은 그림이 나온다 (slug 을 씨앗으로 쓴다).
  */
 
 const PALETTE = {
-  magician: { a: '#100B18', b: '#2E1E44', ac: '#C9A96A', glow: '#F0DCB0', floor: '#1A1226' },
-  singer:   { a: '#1A0C11', b: '#48212D', ac: '#E29AA4', glow: '#F7D4CB', floor: '#2A1219' },
-  actor:    { a: '#0E1116', b: '#28323F', ac: '#A8C4E4', glow: '#E2EDF8', floor: '#161C24' },
-  band:     { a: '#0C0E0D', b: '#20291F', ac: '#D9E85C', glow: '#F2F9B4', floor: '#141914' },
-  default:  { a: '#121218', b: '#2A2A36', ac: '#A8AEBC', glow: '#E4E7EE', floor: '#1A1A22' },
+  magician: { bg1:'#3A2555', bg2:'#150E22', ac:'#E0B964', ink:'#1A1226', glow:'#F5E3B8' },
+  singer:   { bg1:'#52242F', bg2:'#1E0D13', ac:'#F0A6AE', ink:'#2A1219', glow:'#FBDCD5' },
+  actor:    { bg1:'#2C3murky', bg2:'#101419', ac:'#A8C4E4', ink:'#161C24', glow:'#E6F0FA' },
+  band:     { bg1:'#26301F', bg2:'#0D100C', ac:'#D9E85C', ink:'#141914', glow:'#F2F9B4' },
+  default:  { bg1:'#2E2E3C', bg2:'#131318', ac:'#A8AEBC', ink:'#1A1A22', glow:'#E4E7EE' },
 };
+PALETTE.actor.bg1 = '#2C3745';
+
+const SKIN = '#F2D3B4';
+const SKIN_2 = '#DFB894';
 
 const DEFAULT_PROP = { magician: 'hat', singer: 'mic', actor: 'plain', band: 'guitar' };
-
-/* ── 조각. 한 사람은 viewBox 0 0 100 120, 바닥이 y=120 ── */
-
-const BUST = 'M50 46c-9 0-16 6-19 15-2 7-3 14-3 21v38h44V82c0-7-1-14-3-21-3-9-10-15-19-15z';
-const head = (cy, r) => `<circle cx="50" cy="${cy}" r="${r}"/>`;
-
-const PROP = {
-  /* 실크햇 */
-  hat: `<path d="M33 21h34v4H33z"/><path d="M38 3h24v18H38z"/>`,
-  /* 실크햇 + 든 손에서 날아오르는 새 */
-  dove: `<path d="M33 21h34v4H33z"/><path d="M38 3h24v18H38z"/>
-         <path d="M64 62c5-6 11-13 16-19l6 4c-6 7-12 14-17 20z"/><circle cx="84" cy="45" r="5.5"/>
-         <path d="M90 36c5-4 11-5 16-2-4 1-6 4-7 6 4 0 7 1 10 4-5 0-8 1-11 4-1-5-4-9-8-12z" fill-opacity=".92"/>
-         <path d="M90 36c-4-4-4-11-1-15 1 3 3 6 5 7 0-4 3-7 6-9-2 4-1 8 0 11-4 1-7 3-10 6z" fill-opacity=".72"/>`,
-  /* 부채꼴 카드 */
-  cards: `<g transform="translate(70 54) rotate(-18)">
-            <rect x="0" y="0" width="12" height="18" rx="1.5" transform="rotate(-16)"/>
-            <rect x="5" y="-1" width="12" height="18" rx="1.5"/>
-            <rect x="10" y="0" width="12" height="18" rx="1.5" transform="rotate(16 16 9)"/>
-          </g><circle cx="66" cy="62" r="5"/>`,
-  /* 스탠드 마이크 */
-  mic: `<rect x="78" y="29" width="11" height="19" rx="5.5"/><path d="M83 48h1.4v15H83z"/>
-        <path d="M75 43a8.5 8.5 0 0 0 17 0h-2.5a6 6 0 0 1-12 0z"/>`,
-  /* 손에 든 마이크 (진행자) */
-  handmic: `<path d="M63 63c4-5 9-11 14-16l5 4c-5 6-10 12-14 17z"/><circle cx="80" cy="48" r="5"/>
-            <rect x="80" y="30" width="9" height="16" rx="4.5" transform="rotate(14 84 38)"/>`,
-  /* 기타 */
-  guitar: `<path d="M34 98a13 13 0 1 0 0-26 13 13 0 0 0 0 26z" fill-opacity=".85"/>
-           <circle cx="34" cy="85" r="4.5" fill-opacity=".4"/>
-           <path d="M44 80 72 46l4 3-28 34z"/><path d="M70 42h8v6h-8z"/>`,
-  /* 든 손만 */
-  hand: `<path d="M64 62c5-6 11-13 16-19l6 4c-6 7-12 14-17 20z"/><circle cx="84" cy="45" r="5.5"/>`,
-  /* 필름 프레임 — 인물 뒤로 깔린다 */
-  frame: `<rect x="14" y="14" width="72" height="92" fill="none" stroke="currentColor"
-            stroke-width="2.2" stroke-opacity=".55"/>
-          <rect x="8" y="20" width="5" height="7" fill-opacity=".5"/>
-          <rect x="8" y="34" width="5" height="7" fill-opacity=".5"/>
-          <rect x="8" y="48" width="5" height="7" fill-opacity=".5"/>
-          <rect x="87" y="20" width="5" height="7" fill-opacity=".5"/>
-          <rect x="87" y="34" width="5" height="7" fill-opacity=".5"/>
-          <rect x="87" y="48" width="5" height="7" fill-opacity=".5"/>`,
-  plain: '',
-};
-
-/** 한 사람. v 로 머리 크기와 자세가 조금씩 달라진다. */
-function person(prop, v) {
-  const r = 12 + (v % 3);
-  const cy = 30 + (v % 3);
-  // 프레임은 인물 뒤로 깔리므로 먼저 그린다
-  const back = prop === 'frame' ? PROP.frame : '';
-  const front = prop === 'frame' ? '' : (PROP[prop] || '');
-  return `${back}${head(cy, r)}<path d="${BUST}"/>${front}`;
-}
 
 const RATIO = {
   hero:     [900, 1120],
@@ -79,6 +31,7 @@ const RATIO = {
   card:     [1040, 780],
   gallery:  [760, 950],
   wide:     [1280, 720],
+  square:   [800, 800],
 };
 
 function seedOf(s = '') {
@@ -87,56 +40,130 @@ function seedOf(s = '') {
   return Math.abs(h);
 }
 
+/* ── 캐릭터 한 사람. viewBox 0 0 100 120, 발끝이 y=120 ── */
+
+function character({ ac, ink, prop, v }) {
+  const hairStyle = v % 3;
+
+  const hair = [
+    // 단정한 머리
+    `<path d="M27 38c0-14 10-24 23-24s23 10 23 24c0-6-4-9-8-10-3 4-9 6-15 6s-12-2-15-6c-4 1-8 4-8 10z" fill="${ink}"/>`,
+    // 옆으로 넘긴 머리
+    `<path d="M27 38c0-14 10-24 23-24 12 0 20 6 22 16-4-3-11-6-19-6-9 0-15 3-19 8-3 2-5 4-7 6z" fill="${ink}"/>`,
+    // 짧은 머리
+    `<path d="M28 36c1-13 10-22 22-22s21 9 22 22c-3-5-7-8-12-9-3 2-6 3-10 3s-7-1-10-3c-5 1-9 4-12 9z" fill="${ink}"/>`,
+  ][hairStyle];
+
+  const props = {
+    hat: `<g><ellipse cx="50" cy="19" rx="27" ry="5" fill="${ink}"/>
+            <path d="M33 19V6c0-2 1-3 3-3h28c2 0 3 1 3 3v13z" fill="${ink}"/>
+            <rect x="33" y="12" width="34" height="4" fill="${ac}"/></g>`,
+    dove: `<g><ellipse cx="50" cy="19" rx="27" ry="5" fill="${ink}"/>
+             <path d="M33 19V6c0-2 1-3 3-3h28c2 0 3 1 3 3v13z" fill="${ink}"/>
+             <rect x="33" y="12" width="34" height="4" fill="${ac}"/></g>
+           <g transform="translate(2 -4)">
+             <ellipse cx="88" cy="52" rx="9" ry="6" fill="#FFFFFF"/>
+             <path d="M86 48c5-6 13-8 19-5-4 2-6 5-6 8 4-1 8 0 11 3-5 0-9 2-12 5-2-5-6-9-12-11z" fill="#FFFFFF"/>
+             <circle cx="94" cy="50" r="1.4" fill="${ink}"/>
+             <path d="M97 51l4 1-4 1z" fill="${ac}"/></g>`,
+    cards: `<g transform="translate(74 56) rotate(-14)">
+              <rect x="-6" y="0" width="13" height="19" rx="2" fill="#FFFFFF" stroke="${ink}" stroke-width="1" transform="rotate(-18)"/>
+              <rect x="0" y="-2" width="13" height="19" rx="2" fill="#FFFFFF" stroke="${ink}" stroke-width="1"/>
+              <rect x="6" y="0" width="13" height="19" rx="2" fill="#FFFFFF" stroke="${ink}" stroke-width="1" transform="rotate(18 12 9)"/>
+              <path d="M4 6l2-2 2 2-2 3z" fill="${ac}"/></g>`,
+    mic: `<g><rect x="80" y="30" width="12" height="21" rx="6" fill="${ink}"/>
+            <rect x="82" y="33" width="8" height="15" rx="4" fill="${ac}" opacity=".6"/>
+            <path d="M85.5 51h2v18h-2z" fill="${ink}"/>
+            <path d="M77 45a9 9 0 0 0 18 0h-3a6 6 0 0 1-12 0z" fill="${ink}"/></g>`,
+    handmic: `<g transform="rotate(16 78 52)">
+                <rect x="74" y="34" width="10" height="17" rx="5" fill="${ink}"/>
+                <rect x="76" y="36" width="6" height="12" rx="3" fill="${ac}" opacity=".6"/>
+                <rect x="77" y="50" width="4" height="9" rx="2" fill="${ink}"/></g>`,
+    guitar: `<g><path d="M30 104c8 0 14-6 14-13s-6-13-14-13-14 6-14 13 6 13 14 13z" fill="${ac}"/>
+               <circle cx="30" cy="91" r="5" fill="${ink}" opacity=".55"/>
+               <path d="M40 84 70 50l5 4-30 34z" fill="${ink}"/>
+               <rect x="68" y="45" width="10" height="8" rx="1.5" fill="${ink}"/></g>`,
+    frame: `<rect x="10" y="10" width="80" height="104" rx="2" fill="none" stroke="${ac}"
+              stroke-width="2.5" opacity=".55"/>`,
+    hand: '',
+    plain: '',
+  };
+
+  const backProp = prop === 'frame' ? props.frame : '';
+  const frontProp = prop === 'frame' ? '' : (props[prop] || '');
+
+  return `
+    ${backProp}
+    <!-- 몸 -->
+    <path d="M50 68c-13 0-22 8-24 20-1 7-2 14-2 22v10h52v-10c0-8-1-15-2-22-2-12-11-20-24-20z" fill="${ac}"/>
+    <!-- 셔츠 -->
+    <path d="M42 69h16l-3 16h-10z" fill="#FFFFFF"/>
+    <!-- 보타이 -->
+    <path d="M50 74l-7-4v8zM50 74l7-4v8z" fill="${ink}"/>
+    <circle cx="50" cy="74" r="2.2" fill="${ink}"/>
+    <!-- 목 -->
+    <path d="M45 58h10v12h-10z" fill="${SKIN_2}"/>
+    <!-- 머리 -->
+    <circle cx="50" cy="40" r="22" fill="${SKIN}"/>
+    ${hair}
+    <!-- 눈 · 입 -->
+    <circle cx="42" cy="42" r="2.6" fill="${ink}"/>
+    <circle cx="58" cy="42" r="2.6" fill="${ink}"/>
+    <path d="M45 49c1.6 2.4 3.2 3.4 5 3.4s3.4-1 5-3.4" fill="none" stroke="${ink}"
+      stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="36" cy="47" r="3" fill="#E8A08C" opacity=".45"/>
+    <circle cx="64" cy="47" r="3" fill="#E8A08C" opacity=".45"/>
+    ${frontProp}`;
+}
+
 /** 여러 명을 무대에 세운다. 가운데가 가장 크고 앞에 선다. */
 function crowd({ count, prop, n, w, h, kind }) {
-  const solo = count <= 1;
-  const baseH = kind === 'card' || kind === 'wide' ? h * 0.88 : h * 0.82;
+  const baseH = (kind === 'card' || kind === 'wide') ? h * 0.84 : h * 0.78;
 
-  if (solo) {
+  if (count <= 1) {
     const fh = baseH;
     const fw = fh * (100 / 120);
-    return [{ x: (w - fw) / 2, y: h - fh, s: fw / 100, dim: 1, v: n % 3, prop }];
+    return [{ x: (w - fw) / 2, y: h - fh, s: fw / 100, dim: 1, v: n % 3, prop, back: false }];
   }
 
-  // 가운데부터 바깥으로 배치 순서를 만든다
-  const order = [];
   const mid = (count - 1) / 2;
-  for (let i = 0; i < count; i++) order.push(i);
-  order.sort((a, b) => Math.abs(a - mid) - Math.abs(b - mid));
+  const order = Array.from({ length: count }, (_, i) => i)
+    .sort((a, b) => Math.abs(a - mid) - Math.abs(b - mid));
 
-  const spread = w * (count <= 3 ? 0.62 : 0.78);
+  const spread = w * (count <= 3 ? 0.60 : 0.76);
   const step = spread / Math.max(count - 1, 1);
   const startX = (w - spread) / 2;
 
   return order.map((i, rank) => {
-    const off = Math.abs(i - mid) / Math.max(mid, 1);   // 0(가운데) ~ 1(끝)
-    const s = 1 - off * 0.16;
-    const fh = baseH * s * 0.94;
+    const off = Math.abs(i - mid) / Math.max(mid, 1);
+    const fh = baseH * (1 - off * 0.15) * 0.92;
     const fw = fh * (100 / 120);
     return {
       x: startX + step * i - fw / 2,
-      y: h - fh - off * h * 0.015,
+      y: h - fh - off * h * 0.012,
       s: fw / 100,
-      dim: 1 - off * 0.30,
-      v: (n + i * 7) % 3,
-      // 소품은 가운데 한 사람만 크게, 나머지는 담백하게
+      dim: 1 - off * 0.22,
+      v: (n + i * 5) % 3,
       prop: rank === 0 ? prop : (prop === 'guitar' && i % 2 === 0 ? 'guitar' : 'plain'),
       back: rank !== 0,
     };
-  }).sort((a, b) => (b.back ? 1 : 0) - (a.back ? 1 : 0));  // 뒷사람 먼저 그린다
+  }).sort((a, b) => (b.back ? 1 : 0) - (a.back ? 1 : 0));
 }
 
 /**
  * @param {object} o
  * @param {string} o.category  magician | singer | actor | band
- * @param {string} o.kind      hero | portrait | card | gallery | wide
- * @param {string} o.seed      아티스트 slug 등
+ * @param {string} o.kind      hero | portrait | card | gallery | wide | square
+ * @param {string} o.seed
  * @param {number} [o.count]   인원수 (1~6)
- * @param {string} [o.prop]    hat | dove | cards | mic | handmic | guitar | hand | plain
+ * @param {string} [o.prop]    hat | dove | cards | mic | handmic | guitar | frame | plain
+ * @param {object} [o.colors]  { bg1, bg2, ac, ink, glow } — 디자인 색을 입힐 때
  * @returns {string} data: URI (SVG)
  */
-export function placeholder({ category = 'default', kind = 'hero', seed = '', count, prop } = {}) {
-  const p = PALETTE[category] || PALETTE.default;
+export function placeholder({
+  category = 'default', kind = 'hero', seed = '', count, prop, colors,
+} = {}) {
+  const p = { ...(PALETTE[category] || PALETTE.default), ...(colors || {}) };
   const [w, h] = RATIO[kind] || RATIO.hero;
 
   const n = seedOf(seed + kind);
@@ -144,66 +171,48 @@ export function placeholder({ category = 'default', kind = 'hero', seed = '', co
   const useProp = prop || DEFAULT_PROP[category] || 'plain';
 
   const beamX = 38 + (n % 26);
-  const tilt = -10 + ((n >> 2) % 20);
-  const ringY = 30 + ((n >> 4) % 14);
-  const grain = 0.04 + ((n >> 6) % 4) / 220;
-  const curtains = (n >> 8) % 2 === 0;
+  const tilt = -9 + ((n >> 2) % 18);
+  const ringY = 28 + ((n >> 4) % 14);
 
   const figures = crowd({ count: people, prop: useProp, n, w, h, kind });
 
-  const curtainLines = curtains
-    ? Array.from({ length: 9 }, (_, i) => {
-        const x = (w / 9) * i + (n % 17);
-        return `<path d="M${x} 0 Q${x + 12} ${h * 0.5} ${x} ${h}" stroke="${p.ac}" stroke-opacity=".05" stroke-width="${8 + (i % 3) * 5}" fill="none"/>`;
-      }).join('')
-    : '';
+  const drawn = figures.map((f) => `<g transform="translate(${f.x.toFixed(1)} ${f.y.toFixed(1)}) scale(${f.s.toFixed(3)})" opacity="${f.dim.toFixed(2)}">
+      ${character({ ac: p.ac, ink: p.ink, prop: f.prop, v: f.v })}
+    </g>`).join('');
 
-  const drawn = figures.map((f) => {
-    const body = person(f.prop, f.v);
-    return `<g transform="translate(${f.x.toFixed(1)} ${f.y.toFixed(1)}) scale(${f.s.toFixed(3)})" opacity="${f.dim.toFixed(2)}">
-      <g fill="${p.a}" fill-opacity=".95">${body}</g>
-      <g fill="none" stroke="${p.ac}" stroke-opacity=".32" stroke-width=".7">${body}</g>
-    </g>`;
-  }).join('');
-
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="무대 위 인물 그래픽">
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="무대 위 캐릭터 그림">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0.25" y2="1">
-      <stop offset="0" stop-color="${p.b}"/><stop offset="1" stop-color="${p.a}"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.2" y2="1">
+      <stop offset="0" stop-color="${p.bg1}"/><stop offset="1" stop-color="${p.bg2}"/>
     </linearGradient>
-    <radialGradient id="spot" cx="${beamX}%" cy="14%" r="76%">
-      <stop offset="0" stop-color="${p.glow}" stop-opacity=".34"/>
-      <stop offset="0.42" stop-color="${p.ac}" stop-opacity=".12"/>
-      <stop offset="1" stop-color="${p.a}" stop-opacity="0"/>
+    <radialGradient id="spot" cx="${beamX}%" cy="12%" r="74%">
+      <stop offset="0" stop-color="${p.glow}" stop-opacity=".30"/>
+      <stop offset="0.45" stop-color="${p.ac}" stop-opacity=".10"/>
+      <stop offset="1" stop-color="${p.bg2}" stop-opacity="0"/>
     </radialGradient>
     <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="${p.glow}" stop-opacity=".24"/>
+      <stop offset="0" stop-color="${p.glow}" stop-opacity=".22"/>
       <stop offset="1" stop-color="${p.glow}" stop-opacity="0"/>
     </linearGradient>
     <radialGradient id="floor" cx="50%" cy="50%" r="50%">
-      <stop offset="0" stop-color="${p.glow}" stop-opacity=".22"/>
+      <stop offset="0" stop-color="${p.glow}" stop-opacity=".24"/>
       <stop offset="1" stop-color="${p.glow}" stop-opacity="0"/>
     </radialGradient>
-    <filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3"/>
-      <feColorMatrix type="saturate" values="0"/></filter>
     <clipPath id="c"><rect width="${w}" height="${h}"/></clipPath>
   </defs>
 
   <g clip-path="url(#c)">
     <rect width="${w}" height="${h}" fill="url(#bg)"/>
-    ${curtainLines}
-    <circle cx="${w * 0.5}" cy="${h * (ringY / 100)}" r="${w * 0.38}"
-            fill="none" stroke="${p.ac}" stroke-opacity=".14" stroke-width="1.4"/>
-    <circle cx="${w * 0.5}" cy="${h * (ringY / 100)}" r="${w * 0.26}"
-            fill="none" stroke="${p.ac}" stroke-opacity=".09" stroke-width="1"/>
-    <g transform="translate(${w * (beamX / 100)} ${-h * 0.06}) rotate(${tilt})">
-      <path d="M0 0 L${-w * 0.34} ${h * 1.06} L${w * 0.34} ${h * 1.06} Z" fill="url(#beam)"/>
+    <circle cx="${w * 0.5}" cy="${h * (ringY / 100)}" r="${w * 0.36}"
+            fill="none" stroke="${p.ac}" stroke-opacity=".22" stroke-width="1.6"/>
+    <circle cx="${w * 0.5}" cy="${h * (ringY / 100)}" r="${w * 0.24}"
+            fill="none" stroke="${p.ac}" stroke-opacity=".12" stroke-width="1"/>
+    <g transform="translate(${w * (beamX / 100)} ${-h * 0.05}) rotate(${tilt})">
+      <path d="M0 0 L${-w * 0.32} ${h * 1.05} L${w * 0.32} ${h * 1.05} Z" fill="url(#beam)"/>
     </g>
     <rect width="${w}" height="${h}" fill="url(#spot)"/>
-    <ellipse cx="${w * 0.5}" cy="${h * 0.965}" rx="${w * 0.36}" ry="${h * 0.045}" fill="url(#floor)"/>
+    <ellipse cx="${w * 0.5}" cy="${h * 0.955}" rx="${w * 0.34}" ry="${h * 0.04}" fill="url(#floor)"/>
     ${drawn}
-    <rect y="${h * 0.88}" width="${w}" height="${h * 0.12}" fill="${p.floor}" fill-opacity=".5"/>
-    <rect width="${w}" height="${h}" filter="url(#n)" opacity="${grain}"/>
   </g>
 </svg>`;
 
