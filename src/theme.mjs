@@ -130,7 +130,7 @@ td.n{font-family:var(--mono);font-size:13.5px;color:var(--ac);white-space:nowrap
 
 /* 여러 페이지로 나눈 사이트의 첫 화면에서 각 갈래로 보내는 칸 */
 .doors{display:grid;gap:12px;margin-top:26px}
-@media(min-width:700px){.doors{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:700px){.doors{grid-template-columns:repeat(var(--cols,4),1fr)}}
 .doors a{display:flex;flex-direction:column;gap:5px;text-decoration:none;color:inherit;
   border:1px solid var(--line);background:var(--night-2);padding:20px 18px}
 .doors a:hover{border-color:var(--ac)}
@@ -215,6 +215,31 @@ td.n{font-family:var(--mono);font-size:13.5px;color:var(--ac);white-space:nowrap
   line-height:1.1;letter-spacing:.02em}
 .c-sub{color:var(--ivory-2);font-size:15.5px;margin-top:8px;max-width:42ch}
 .c-actions{display:flex;flex-wrap:wrap;gap:10px}
+
+/* ---- 유형 D · 전시형 ---- */
+/* 첫 화면이 사진 한 장으로 끝난다. 글씨는 사진 위에 얹히므로 어둠막을 깐다 */
+.d-stage{position:relative;min-height:100svh;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;text-align:center;
+  padding:clamp(90px,14vh,140px) clamp(20px,5vw,48px) clamp(70px,10vh,110px);
+  background:var(--night-2) center/cover no-repeat}
+.d-stage::before{content:"";position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.55),rgba(0,0,0,.25) 42%,rgba(0,0,0,.75))}
+.d-mid{position:relative;max-width:22ch}
+.d-name{font-family:var(--display);font-weight:800;color:#fff;margin:0;
+  font-size:clamp(40px,9vw,86px);line-height:1.02;letter-spacing:.05em;
+  text-shadow:0 2px 24px rgba(0,0,0,.5)}
+.d-role{font-family:var(--mono);font-size:clamp(11px,1.6vw,13px);letter-spacing:.3em;
+  text-transform:uppercase;color:var(--ac);margin:0 0 18px;font-weight:500}
+.d-line{font-family:var(--display);color:rgba(255,255,255,.88);margin:22px 0 0;
+  font-size:clamp(15px,2vw,20px);line-height:1.65}
+.d-down{position:absolute;left:50%;bottom:clamp(22px,4vh,38px);transform:translateX(-50%);
+  text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:9px}
+.d-down span{font-family:var(--mono);font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;
+  color:rgba(255,255,255,.75)}
+.d-down::after{content:"";width:1px;height:34px;background:linear-gradient(to bottom,rgba(255,255,255,.75),transparent)}
+.d-down:hover span{color:var(--ac)}
+.d-down:focus-visible{outline:2px solid var(--ac);outline-offset:6px}
+@media(max-height:520px){.d-stage{min-height:420px}.d-down{display:none}}
 
 /* 멤버 */
 .members{display:grid;gap:14px;grid-template-columns:repeat(2,1fr)}

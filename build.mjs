@@ -15,7 +15,7 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { renderArtist, renderArtistPages, CATEGORY_LABEL } from './src/render.mjs';
+import { renderArtist, renderArtistPages, CATEGORY_LABEL, PAGES, pagesOf } from './src/render.mjs';
 import { renderLanding, renderList, renderDesigns, renderApply } from './src/pages.mjs';
 import { DESIGNS } from './src/designs.mjs';
 
@@ -74,7 +74,11 @@ function validate(a, file) {
   if (!a.slug) problems.push('slug 없음');
   if (!a.name) problems.push('name 없음');
   if (!CATEGORY_LABEL[a.category]) problems.push(`category 가 이상함: ${a.category}`);
-  if (!['A', 'B', 'C'].includes(a.type)) problems.push(`type 은 A · B · C 중 하나여야 함: ${a.type}`);
+  if (!['A', 'B', 'C', 'D'].includes(a.type)) problems.push(`type 은 A · B · C · D 중 하나여야 함: ${a.type}`);
+  // 오타 난 갈래 이름은 조용히 버려지므로 여기서 잡아 준다
+  const bad = (a.pages || []).filter((k) => !PAGES[k]);
+  if (bad.length) problems.push(`pages 에 없는 갈래: ${bad.join(' · ')} (쓸 수 있는 것: ${Object.keys(PAGES).join(' · ')})`);
+  if (a.pages && !a.multipage) problems.push('pages 는 multipage 가 true 일 때만 씁니다');
   if (problems.length) {
     throw new Error(`${path.basename(file)} — ${problems.join(' / ')}`);
   }
@@ -130,7 +134,8 @@ async function main() {
     }
 
     console.log(`  ${a.slug.padEnd(14)} ${CATEGORY_LABEL[a.category]} · ${a.type}안`
-      + `${a.multipage ? ' · 5쪽' : ''}${a.draft ? ' (시안)' : ''}`);
+      + `${a.multipage ? ` · ${pagesOf(a).length + 1}쪽 (${pagesOf(a).join(' · ')})` : ''}`
+      + `${a.draft ? ' (시안)' : ''}`);
   }
 
   // 자체 페이지
@@ -164,7 +169,7 @@ async function main() {
   // 검색엔진용
   const urls = ['', 'list/', 'designs/', 'apply/', ...artists.flatMap((a) =>
     a.multipage
-      ? [`${a.slug}/`, ...['about', 'stage', 'gallery', 'contact'].map((k) => `${a.slug}/${k}/`)]
+      ? [`${a.slug}/`, ...pagesOf(a).map((k) => `${a.slug}/${k}/`)]
       : [`${a.slug}/`])];
   await writeFile(path.join(dist, 'sitemap.xml'),
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +

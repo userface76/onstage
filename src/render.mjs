@@ -3,7 +3,10 @@
  *
  * 축이 두 개다.
  *   category (직군)  — 어떤 블록이 들어가나  (마술사=레퍼토리, 배우=필모그래피 …)
- *   type     (유형)  — 어떤 순서로 배치하나  (A 원페이지 / B 일정중심 / C 섭외중심)
+ *   type     (유형)  — 어떤 순서로 배치하나  (A 원페이지 / B 일정중심 / C 섭외중심 / D 전시형)
+ *
+ * multipage 를 켜면 갈래마다 페이지가 따로 생긴다.
+ * 어떤 갈래를 쓸지는 artist.pages 로 고른다 — 안 쓰면 소개 · 무대 · 갤러리 · 섭외 넷이다.
  *
  * 값이 비어 있으면 그 블록은 나오지 않는다.
  * 다만 artist.draft 가 true 이면 「채울 자리」 안내가 대신 나온다 — 시안 단계용.
@@ -14,6 +17,7 @@ import { placeholder } from './placeholder.mjs';
 import { designFor, FONT_HREF } from './designs.mjs';
 import { INQUIRY_JS } from './inquiry.mjs';
 import { LIGHTBOX_CSS, LIGHTBOX_JS } from './lightbox.mjs';
+import { NAV_CSS, NAV_JS } from './nav.mjs';
 
 /* ---------- 도구 ---------- */
 
@@ -129,6 +133,42 @@ function historyBlock(artist) {
   return `<div class="wrap"><section>
     <p class="eye">History</p><h2>${esc(artist.historyTitle || '활동 이력')}</h2>${body}
   </section></div>`;
+}
+
+/**
+ * 수상 경력. history 안에 섞으면 묻힌다 — 세계대회 입상이 있으면 따로 세우는 편이 강하다.
+ * demand 가 false 면 자료가 없을 때 아무것도 내지 않는다 (기존 유형에 끼워 넣을 때).
+ * 페이지 한 장을 통째로 이것에 내줄 때만 demand 를 켜서 「채울 자리」를 보인다.
+ */
+function awardsBlock(artist, { demand = false } = {}) {
+  if (!has(artist.awards) && !demand) return '';
+  const rows = (artist.awards || []).map((w) => `<tr>
+      <td class="n">${esc(w.year || '—')}</td><td class="b">${esc(w.title)}</td>
+      <td>${esc(w.place || '—')}</td><td>${esc(w.result || '—')}</td></tr>`).join('');
+  const body = slot(artist, artist.awards, '수상',
+    '연도 · 대회 또는 시상식 · 주최와 장소 · 성적. 본인이 준 자료에 있는 것만 옮깁니다.',
+    () => `<div class="scroll" style="margin-top:22px"><table>
+        <thead><tr><th>연도</th><th>대회 · 시상</th><th>주최 · 장소</th><th>성적</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>`);
+  if (!body) return '';
+  return `<div class="wrap"><section id="award"><p class="eye">Award</p>
+    <h2>${esc(artist.awardsTitle || '수상 경력')}</h2>${body}</section></div>`;
+}
+
+/** 해외 공연 이력. 어느 나라 어느 무대에 섰는지가 곧 이력이 되는 직군이 있다. */
+function tourBlock(artist, { demand = false } = {}) {
+  if (!has(artist.tour) && !demand) return '';
+  const rows = (artist.tour || []).map((t) => `<tr>
+      <td class="n">${esc(t.year || '—')}</td><td class="b">${esc(t.country || '—')}</td>
+      <td>${esc(t.city || '—')}</td><td>${esc(t.event || '—')}</td></tr>`).join('');
+  const body = slot(artist, artist.tour, '해외 공연',
+    '연도 · 나라 · 도시 · 무대 이름. 나라 이름만 늘어놓기보다 무대 이름을 적는 편이 믿음이 갑니다.',
+    () => `<div class="scroll" style="margin-top:22px"><table>
+        <thead><tr><th>연도</th><th>나라</th><th>도시</th><th>무대</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>`);
+  if (!body) return '';
+  return `<div class="wrap"><section id="tour"><p class="eye">World Tour</p>
+    <h2>${esc(artist.tourTitle || '해외 무대')}</h2>${body}</section></div>`;
 }
 
 function contactBlock(artist, { form = false } = {}) {
@@ -252,36 +292,98 @@ const WORK_LABEL = {
   magician: '무대', singer: '노래', actor: '작품', band: '멤버',
 };
 
-/** 여러 페이지로 나눌 때 쓰는 차례. 한 장짜리는 같은 이름의 앵커로 간다. */
-export const SUB_PAGES = [
-  { key: 'about',   label: '소개',   anchor: '#about' },
-  { key: 'stage',   label: '무대',   anchor: '#work' },
-  { key: 'gallery', label: '갤러리', anchor: '#gallery' },
-  { key: 'contact', label: '섭외',   anchor: '#contact' },
-];
+/**
+ * 페이지 갈래 한 벌.
+ *
+ * 아티스트 JSON 의 "pages" 로 골라 쓴다 — 안 쓰면 DEFAULT_PAGES 넷이다.
+ *   "pages": ["about", "award", "tour", "contact"]
+ *
+ * 한 장짜리(multipage 아님)에서는 페이지가 아니라 같은 이름의 앵커로 간다.
+ * 갈래를 늘리려면 여기에 한 줄만 넣으면 상단 메뉴 · 둘러보기 칸 · sitemap 이 함께 따라온다.
+ */
+export const PAGES = {
+  about:   { label: '소개',      anchor: '#about',
+             door: '어떤 사람이고 무엇을 해 왔는지',
+             body: (a) => profileBlock(a) + historyBlock(a) },
+  stage:   { label: '무대',      anchor: '#work',
+             door: '무대 구성과 소요 시간, 필요한 조건',
+             body: (a) => catBlocks(a) + scheduleBlock(a) },
+  award:   { label: '수상',      anchor: '#award',
+             door: '어디서 무엇으로 인정받았는지',
+             body: (a) => awardsBlock(a, { demand: true }) },
+  tour:    { label: '해외 공연', anchor: '#tour',
+             door: '어느 나라 어느 무대에 섰는지',
+             body: (a) => tourBlock(a, { demand: true }) },
+  gallery: { label: '갤러리',    anchor: '#gallery',
+             door: '무대에서 찍힌 사진들',
+             body: (a) => galleryBlock(a) },
+  contact: { label: '섭외',      anchor: '#contact',
+             door: '일정과 장소를 알려주시면 답해 드립니다',
+             body: (a) => contactBlock(a, { form: true }) },
+};
+
+export const DEFAULT_PAGES = ['about', 'stage', 'gallery', 'contact'];
+
+/** 이 아티스트가 쓰는 갈래의 차례. 모르는 이름은 조용히 버린다. */
+export function pagesOf(artist) {
+  const keys = (artist.pages || DEFAULT_PAGES).filter((k) => PAGES[k]);
+  return keys.length ? keys : DEFAULT_PAGES;
+}
+
+/** 「무대」는 직군마다 이름이 다르다 — 배우에게는 「작품」이다. */
+const pageLabel = (artist, key) =>
+  key === 'stage' ? (WORK_LABEL[artist.category] || PAGES.stage.label) : PAGES[key].label;
+
+/** 첫 화면을 사진 한 장으로 비우는 유형은 메뉴를 접어 둔다. "menu" 로 뒤집을 수 있다. */
+const overlayMenu = (artist) =>
+  artist.menu === 'overlay' || (artist.menu !== 'bar' && artist.type === 'D');
+
+/** 한 장짜리에서 쓰는 앵커 차례. 자료가 없는 갈래는 링크도 만들지 않는다. */
+function anchorMenu(artist) {
+  return [
+    { href: '#about', label: '소개' },
+    (CATEGORY_BLOCKS[artist.category] || []).length
+      ? { href: '#work', label: WORK_LABEL[artist.category] || '활동' } : null,
+    (artist.shows || []).length ? { href: '#schedule', label: '일정' } : null,
+    has(artist.awards) ? { href: '#award', label: PAGES.award.label } : null,
+    has(artist.tour) ? { href: '#tour', label: PAGES.tour.label } : null,
+    { href: '#gallery', label: '갤러리' },
+    { href: '#contact', label: '섭외' },
+  ].filter(Boolean);
+}
 
 function siteBar(artist, site, { page = null } = {}) {
   const base = `/${artist.slug}/`;
+  const home = artist.multipage ? esc(base) : '#top';
 
   const menu = artist.multipage
-    ? SUB_PAGES.map((s) => ({
-        href: base + s.key + '/',
-        label: s.key === 'stage' ? (WORK_LABEL[artist.category] || '무대') : s.label,
-        on: page === s.key,
+    ? pagesOf(artist).map((k) => ({
+        href: base + k + '/', label: pageLabel(artist, k), on: page === k,
       }))
-    : [
-        { href: '#about', label: '소개' },
-        (CATEGORY_BLOCKS[artist.category] || []).length
-          ? { href: '#work', label: WORK_LABEL[artist.category] || '활동' } : null,
-        (artist.shows || []).length ? { href: '#schedule', label: '일정' } : null,
-        { href: '#gallery', label: '갤러리' },
-        { href: '#contact', label: '섭외' },
-      ].filter(Boolean);
+    : anchorMenu(artist);
+
+  const links = (extra = '') => menu
+    .map((m) => `<a${extra} href="${esc(m.href)}"${m.on ? ' aria-current="page"' : ''}>${esc(m.label)}</a>`)
+    .join('');
+
+  if (overlayMenu(artist)) {
+    // 첫 화면 위에서는 바가 사진 위에 떠 있고, 아래 페이지에서는 여느 바처럼 붙어 있다
+    const float = page ? '' : ' sitebar--float';
+    return `<header class="sitebar${float}"><div class="wrap sitebar__in">
+    <a class="sitebar__me" href="${home}">${esc(artist.nameMark || artist.name)}</a>
+    <button class="navbtn" type="button" aria-expanded="false" aria-controls="navsheet">Menu</button>
+  </div>
+  <nav class="navsheet" id="navsheet" aria-label="페이지 안" hidden>
+    <button class="navclose" type="button">Close</button>
+    ${links()}
+    <a class="navsheet__sub" href="/list/">${esc(site.brand)} 목록</a>
+  </nav></header>`;
+  }
 
   return `<header class="sitebar"><div class="wrap sitebar__in">
-    <a class="sitebar__me" href="${artist.multipage ? esc(base) : '#top'}">${esc(artist.nameMark || artist.name)}</a>
+    <a class="sitebar__me" href="${home}">${esc(artist.nameMark || artist.name)}</a>
     <nav class="sitebar__nav" aria-label="페이지 안">
-      ${menu.map((m) => `<a href="${esc(m.href)}"${m.on ? ' aria-current="page"' : ''}>${esc(m.label)}</a>`).join('')}
+      ${links()}
     </nav>
     <a class="sitebar__home" href="/list/">${esc(site.brand)} 목록</a>
   </div></header>`;
@@ -321,8 +423,8 @@ function previewBar(design, site) {
 
 /* ---------- 유형 배치 ---------- */
 
-function layoutA(artist) {
-  const hero = `<div class="wrap"><div class="a-hero">
+function heroA(artist) {
+  return `<div class="wrap"><div class="a-hero">
       <div>
         ${has(artist.role) ? `<p class="a-role">${esc(artist.role)}</p>` : ''}
         <h1 class="a-name">${esc(artist.name)}</h1>
@@ -334,12 +436,16 @@ function layoutA(artist) {
       </div>
       ${img(pic(artist, 'hero'), `${artist.name}`, 'a-shot')}
     </div></div>`;
-  return hero + profileBlock(artist) + catBlocks(artist) + galleryBlock(artist) + contactBlock(artist);
 }
 
-function layoutB(artist) {
+function layoutA(artist) {
+  return heroA(artist) + profileBlock(artist) + catBlocks(artist)
+       + awardsBlock(artist) + tourBlock(artist) + galleryBlock(artist) + contactBlock(artist);
+}
+
+function heroB(artist) {
   const next = (artist.shows || [])[0];
-  const band = `<div class="b-band"><div class="wrap">
+  return `<div class="b-band"><div class="wrap">
       <p class="eye" style="margin-bottom:4px">${esc(artist.nextLabel || 'Next Show')}</p>
       ${next ? `<div class="b-next">
           <div class="b-date">${esc(next.date)}${next.time ? `<span>${esc(next.time)}</span>` : ''}</div>
@@ -350,18 +456,21 @@ function layoutB(artist) {
       : (artist.draft ? `<div class="fill" style="margin-top:14px"><span>채울 자리 — 다음 일정</span>
           <p>가장 가까운 일정 하나를 여기에 둡니다. 이 자리가 비면 B안은 힘을 잃습니다 — 일정이 드물면 A안이나 C안이 낫습니다.</p></div>` : '')}
     </div></div>`;
+}
+
+function layoutB(artist) {
   const two = `<div class="wrap"><section><div class="b-two">
       <div><p class="eye">On Stage</p><h2>${esc(artist.profileTitle || '소개')}</h2>
         ${(artist.intro || []).map((t) => `<p class="lede" style="margin-top:12px">${nl(t)}</p>`).join('')}
         ${factGrid(artist)}</div>
       ${img(pic(artist, 'hero'), artist.name, 'b-shot')}
     </div></section></div>`;
-  return band + scheduleBlock(artist, { first: true }) + catBlocks(artist) + two
-       + galleryBlock(artist) + contactBlock(artist);
+  return heroB(artist) + scheduleBlock(artist, { first: true }) + catBlocks(artist) + two
+       + awardsBlock(artist) + tourBlock(artist) + galleryBlock(artist) + contactBlock(artist);
 }
 
-function layoutC(artist) {
-  const top = `<div class="c-top"><div class="wrap">
+function heroC(artist) {
+  return `<div class="c-top"><div class="wrap">
       <div class="c-head">
         ${img(artist.photos?.portrait || artist.photos?.hero || pic(artist, 'portrait'), artist.name, 'c-shot')}
         <div>
@@ -376,33 +485,65 @@ function layoutC(artist) {
       </div>
       ${factGrid(artist)}
     </div></div>`;
-  return top + catBlocks(artist) + galleryBlock(artist) + historyBlock(artist)
-       + contactBlock(artist, { form: true });
 }
 
-const LAYOUTS = { A: layoutA, B: layoutB, C: layoutC };
+function layoutC(artist) {
+  return heroC(artist) + catBlocks(artist) + awardsBlock(artist) + tourBlock(artist)
+       + galleryBlock(artist) + historyBlock(artist) + contactBlock(artist, { form: true });
+}
+
+/**
+ * 유형 D — 전시형.
+ *
+ * 첫 화면이 사진 한 장으로 끝난다. 이름과 한 줄 말고는 아무것도 놓지 않는다.
+ * 나머지는 전부 접힌 메뉴 안에 있다 — 이미 이름이 알려진 사람에게 맞는 배치다.
+ * 반대로 처음 보는 담당자에게 무엇을 하는 사람인지 알려야 한다면 A · C 가 낫다.
+ */
+function heroD(artist) {
+  const src = pic(artist, 'hero');
+  const next = artist.multipage ? '#pages' : '#about';
+  return `<div class="d-stage" style="background-image:url(&quot;${esc(src)}&quot;)">
+    <div class="d-mid">
+      ${has(artist.role) ? `<p class="d-role">${esc(artist.role)}</p>` : ''}
+      <h1 class="d-name">${esc(artist.nameMark || artist.name)}</h1>
+      ${has(artist.tagline) ? `<p class="d-line">${nl(artist.tagline)}</p>` : ''}
+    </div>
+    <a class="d-down" href="${next}"><span>Scroll</span></a>
+  </div>`;
+}
+
+function layoutD(artist) {
+  return heroD(artist) + profileBlock(artist) + catBlocks(artist)
+       + awardsBlock(artist) + tourBlock(artist) + scheduleBlock(artist)
+       + galleryBlock(artist) + historyBlock(artist) + contactBlock(artist, { form: true });
+}
+
+const LAYOUTS = { A: layoutA, B: layoutB, C: layoutC, D: layoutD };
+
+/** 첫 화면만 — 여러 페이지로 나눌 때 쓴다. */
+const HEROES = { A: heroA, B: heroB, C: heroC, D: heroD };
 
 /* ---------- 한 장으로 ---------- */
 
 /* ---------- 여러 페이지로 나누기 ---------- */
 
-const DOOR_TEXT = {
-  about:   '어떤 사람이고 무엇을 해 왔는지',
-  stage:   '무대 구성과 소요 시간, 필요한 조건',
-  gallery: '무대에서 찍힌 사진들',
-  contact: '일정과 장소를 알려주시면 답해 드립니다',
-};
-
-/** 첫 화면에서 네 갈래로 보내는 칸. */
+/**
+ * 첫 화면에서 각 갈래로 보내는 칸.
+ *
+ * 유형 D 는 메뉴를 접어 두므로 이 칸이 유일한 길잡이가 된다.
+ * 검색엔진도 이 링크를 타고 하위 페이지를 찾는다 — 접힌 메뉴만 두면 안 되는 이유다.
+ */
 function doors(artist) {
   const base = `/${artist.slug}/`;
-  return `<div class="wrap"><section>
+  const keys = pagesOf(artist);
+  const cols = Math.min(keys.length, 4);
+  return `<div class="wrap"><section id="pages">
     <p class="eye">Pages</p>
     <h2>둘러보기</h2>
-    <div class="doors">
-      ${SUB_PAGES.map((s) => `<a href="${esc(base + s.key)}/">
-        <b>${esc(s.key === 'stage' ? (WORK_LABEL[artist.category] || '무대') : s.label)}</b>
-        <span>${esc(DOOR_TEXT[s.key])}</span>
+    <div class="doors" style="--cols:${cols}">
+      ${keys.map((k) => `<a href="${esc(base + k)}/">
+        <b>${esc(pageLabel(artist, k))}</b>
+        <span>${esc(PAGES[k].door)}</span>
         <i>보기 →</i>
       </a>`).join('')}
     </div>
@@ -410,26 +551,17 @@ function doors(artist) {
 }
 
 /**
- * 한 아티스트를 다섯 장으로 나눈다 — 첫 화면 + 소개 · 무대 · 갤러리 · 섭외.
+ * 한 아티스트를 여러 장으로 나눈다 — 첫 화면 + pagesOf() 가 정한 갈래들.
  * 한 장짜리보다 「개인 홈페이지」처럼 읽힌다.
  * @returns {{key:string, html:string}[]}  key 가 '' 이면 첫 화면이다.
  */
 export function renderArtistPages(artist, site, opts = {}) {
-  const hero = artist.type === 'C' ? layoutC : artist.type === 'B' ? layoutB : layoutA;
-
   // 첫 화면은 인사만 하고 나머지는 각 페이지로 보낸다
-  const homeHero = artist.type === 'A'
-    ? layoutA(artist).split('<div class="wrap"><section id="about">')[0]
-    : artist.type === 'B'
-      ? layoutB(artist).split('<div class="wrap"><section id="schedule"')[0]
-      : layoutC(artist).split('<div class="wrap"><section id="work"')[0];
+  const hero = (HEROES[artist.type] || heroA)(artist);
 
   const pages = [
-    { key: '', body: homeHero + doors(artist) },
-    { key: 'about', body: profileBlock(artist) + historyBlock(artist) },
-    { key: 'stage', body: catBlocks(artist) + scheduleBlock(artist) },
-    { key: 'gallery', body: galleryBlock(artist) },
-    { key: 'contact', body: contactBlock(artist, { form: true }) },
+    { key: '', body: hero + doors(artist) },
+    ...pagesOf(artist).map((k) => ({ key: k, body: PAGES[k].body(artist) })),
   ];
 
   return pages.map((p) => ({
@@ -438,7 +570,7 @@ export function renderArtistPages(artist, site, opts = {}) {
       ...opts,
       page: p.key || null,
       body: p.body || `<div class="wrap"><section><p class="lede">준비 중입니다.</p></section></div>`,
-      titleSuffix: p.key ? ' · ' + (SUB_PAGES.find((s) => s.key === p.key)?.label || '') : '',
+      titleSuffix: p.key ? ' · ' + pageLabel(artist, p.key) : '',
     }),
   }));
 }
@@ -472,6 +604,7 @@ ${artist.photos?.hero ? `<meta property="og:image" content="${esc(artist.photos.
 <link rel="stylesheet" href="${FONT_HREF}">
 <style>${css(artist.accent)}
 ${LIGHTBOX_CSS}
+${NAV_CSS}
 /* ${design.code} · ${design.name} */
 ${design.css}</style>
 </head>
@@ -492,6 +625,7 @@ ${wrap(opts.body + (opts.preview || artist.multipage ? '' : relatedBlock(artist,
 </p>
 <script>${INQUIRY_JS}
 ${LIGHTBOX_JS}
+${NAV_JS}
 ${design.js || ''}</script>
 </body>
 </html>`;
