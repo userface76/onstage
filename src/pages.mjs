@@ -5,6 +5,7 @@ import { esc, CATEGORY_LABEL } from './render.mjs';
 import { placeholder } from './placeholder.mjs';
 import { INQUIRY_JS } from './inquiry.mjs';
 import { applyBody, APPLY_CSS } from './apply.mjs';
+import { DESIGNS } from './designs.mjs';
 
 const shell = (site, { title, desc, body, extra = '' }) => `<!doctype html>
 <html lang="ko">
@@ -275,7 +276,7 @@ export function renderLanding(site, artists) {
       <span class="price__v">${esc(site.price.build)}</span>
       <span class="price__d">${esc(site.price.buildNote)} · ${esc(site.price.pages)}</span>
       <ul>
-        <li>디자인 ${esc(String(site.designCount || 15))}종 중에서 선택</li>
+        <li>디자인 ${esc(String(site.designCount || DESIGNS.length))}종 중에서 선택</li>
         <li>프로필 · 영상 · 사진</li>
         <li>직군별 표 — 레퍼토리 · 필모그래피 · 대표곡</li>
         <li>섭외 문의폼</li>
@@ -377,6 +378,9 @@ export function renderApply(site, designs) {
 
 /* ---------- 디자인 갤러리 ---------- */
 
+/** 디자인 카드에 「이 배치로 보여 준다」를 알려 주는 말. */
+const LAYOUT_CHIP = { A: '원페이지', B: '일정 중심', C: '섭외 중심', D: '전시형' };
+
 export function renderDesigns(site, designs) {
   const concepts = [...new Set(designs.map((d) => d.concept))];
 
@@ -410,6 +414,7 @@ export function renderDesigns(site, designs) {
         <span class="chips">
           <span class="chip chip--on">${esc(d.concept)}</span>
           <span class="chip">${d.light ? '밝은 화면' : '어두운 화면'}</span>
+          ${d.demo?.type ? `<span class="chip">${esc(LAYOUT_CHIP[d.demo.type] || d.demo.type + '안')}</span>` : ''}
         </span>
       </span>
     </a>`).join('');

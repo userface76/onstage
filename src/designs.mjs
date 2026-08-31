@@ -416,6 +416,89 @@ td.n{color:var(--ac);font-size:13px;letter-spacing:.08em}
 `,
 });
 
+
+DESIGNS.push({
+  code: 'OS-117', name: '월드 스테이지', for: '마술사 · 무용 · 해외 활동', concept: '고급스러운',
+  light: false, premium: true,
+  // 이 디자인은 전시형 배치에서 제 모습이 나온다 — 미리보기를 D 안으로 띄운다
+  demo: { type: 'D' },
+  js: REVEAL_JS,
+  css: `
+/* 새까만 바탕에 흰 글씨. 색을 쓰지 않는 대신 여백과 자간으로 격을 만든다.
+   이름은 넓게 벌려 가운데 둔다 — 해외 무대 이력이 있는 사람에게 맞는 얼굴이다. */
+:root{--night:#111111;--night-2:#171717;--night-3:#1E1E1E;--line:#2A2A2A;
+  --ivory:#FFFFFF;--ivory-2:#A8A8A8;--ivory-3:#6E6E6E;--ac:#FFFFFF;--ac-2:#7A7A7A}
+body{font-family:"Noto Sans KR",Helvetica,Arial,sans-serif;font-weight:300;line-height:1.9}
+
+/* 한 덩어리가 한 화면을 차지한다. 칸을 나누는 선은 긋지 않는다 */
+section{padding:clamp(80px,14vh,170px) 0;border-top:0}
+.eye{font-family:var(--mono);font-size:10.5px;letter-spacing:.55em;text-transform:uppercase;
+  color:var(--ivory-3);margin:0 0 30px;font-weight:400}
+h2{font-family:"Noto Sans KR",sans-serif;font-weight:200;letter-spacing:.02em;
+  font-size:clamp(24px,4.4vw,44px);line-height:1.3}
+h3{font-weight:400}
+.lede{color:var(--ivory-2);font-size:16px;line-height:2.05;max-width:44ch}
+
+/* 첫 화면 — 이름 하나 */
+.d-mid{max-width:26ch}
+.d-name{font-family:"Noto Sans KR",Helvetica,sans-serif;font-weight:200;
+  font-size:clamp(28px,7vw,62px);letter-spacing:.34em;line-height:1.3;
+  text-indent:.34em;text-shadow:0 2px 30px rgba(0,0,0,.6)}
+.d-role{letter-spacing:.46em;font-size:10.5px;color:rgba(255,255,255,.72);margin-bottom:26px}
+.d-line{font-family:"Noto Sans KR",sans-serif;font-weight:300;letter-spacing:.06em;
+  color:rgba(255,255,255,.82);font-size:clamp(14px,1.7vw,17px)}
+.d-stage::before{background:linear-gradient(to bottom,rgba(0,0,0,.45),rgba(0,0,0,.18) 45%,rgba(17,17,17,.92))}
+
+/* 접힌 메뉴도 같은 얼굴로 */
+.sitebar{background:var(--night)}
+.sitebar__me{font-family:"Noto Sans KR",sans-serif;font-weight:300;letter-spacing:.24em;font-size:15px}
+.navbtn{letter-spacing:.32em;font-size:11px}
+.navsheet a{font-family:"Noto Sans KR",sans-serif;font-weight:200;letter-spacing:.28em;
+  font-size:clamp(19px,4.4vw,32px);text-indent:.28em}
+.navclose{letter-spacing:.28em}
+
+/* 선은 최대한 얇게, 상자는 만들지 않는다 */
+.scroll{border:0;border-top:1px solid var(--line)}
+table{background:transparent}
+thead th{background:transparent;letter-spacing:.24em;font-size:10px;color:var(--ivory-3)}
+th,td{padding:16px 15px 16px 0}
+td.b{font-family:"Noto Sans KR",sans-serif;font-weight:300;font-size:16px;letter-spacing:.02em}
+td.n{color:var(--ivory-2)}
+.rows .t{font-family:"Noto Sans KR",sans-serif;font-weight:300;letter-spacing:.02em;font-size:17px}
+.rows .d{color:var(--ivory-3)}
+.facts{background:var(--line);border:0;border-top:1px solid var(--line)}
+.facts>div{background:var(--night)}
+.facts dt{letter-spacing:.24em}
+.facts dd{font-weight:300;letter-spacing:.02em}
+
+.btn{border-radius:0;font-weight:400;letter-spacing:.22em;font-size:12px;
+  padding:16px 34px;text-transform:uppercase}
+.btn--big{font-size:12.5px;padding:18px 40px}
+.btn--ghost{border-color:var(--ac-2);color:var(--ivory)}
+.cbar{border:0;border-top:1px solid var(--line);background:transparent;padding:34px 0}
+.form{background:transparent;border:0;border-top:1px solid var(--line);padding:26px 0 0}
+.f input,.f textarea{background:var(--night-2);border-color:var(--line)}
+
+/* 사진은 흑백으로 두고 짚었을 때만 색이 돈다 */
+.gal{gap:2px}
+.gal>button{aspect-ratio:1;border-color:var(--line);filter:grayscale(1);transition:filter .4s ease}
+.gal>button:hover{filter:none}
+
+.doors a{background:transparent;border:0;border-top:1px solid var(--line);padding:26px 0}
+.doors b{font-family:"Noto Sans KR",sans-serif;font-weight:300;letter-spacing:.14em;font-size:17px}
+.doors i{letter-spacing:.24em}
+.related a{background:transparent;border:0;border-top:1px solid var(--line);padding:22px 0}
+.related b{font-family:"Noto Sans KR",sans-serif;font-weight:300;letter-spacing:.1em;font-size:19px}
+.fill{border-color:var(--ac-2)}
+.mark{font-family:"Noto Sans KR",sans-serif;font-weight:300;letter-spacing:.2em}
+
+/* 떠오르는 연출 */
+.rv{opacity:0;transform:translateY(26px)}
+.rv--on{opacity:1;transform:none;transition:opacity 1.1s cubic-bezier(.2,.7,.2,1),transform 1.1s cubic-bezier(.2,.7,.2,1)}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}}
+`,
+});
+
 /**
  * 갤러리 카드에 쓰는 축소 견본.
  * 색과 글꼴만 있으면 그 디자인이 어떤 인상인지 카드 안에서 바로 보인다.
@@ -437,6 +520,7 @@ const SWATCH = {
   'OS-114': { bg:'#FCFBF7', ink:'#1F1D18', ac:'#3E5C48', font:'"Noto Serif KR",serif',     w:900, ls:'-.01em' },
   'OS-115': { bg:'#141018', ink:'#F3EFF7', ac:'#FF5DA2', font:'"Noto Sans KR",sans-serif', w:900, ls:'-.035em'},
   'OS-116': { bg:'#FBF9F4', ink:'#14203A', ac:'#A8842C', font:'"Noto Sans KR",sans-serif', w:100, ls:'-.055em'},
+  'OS-117': { bg:'#111111', ink:'#FFFFFF', ac:'#FFFFFF', font:'"Noto Sans KR",sans-serif', w:200, ls:'.3em'   },
 };
 
 DESIGNS.forEach((d) => { d.sw = SWATCH[d.code]; });

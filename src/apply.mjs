@@ -149,7 +149,7 @@ export function applyBody(site, designs) {
       <span class="ap__dl">디자인 — 마음에 드는 것을 고르세요 <small>고르지 않으셔도 됩니다</small></span>
       <div class="picks">${designOpts}</div>
       <p class="ap__note">
-        <a href="/designs/">디자인 15종 크게 보기</a> · 나중에 언제든 무료로 바꿔 드립니다.
+        <a href="/designs/">디자인 ${designs.length}종 크게 보기</a> · 나중에 언제든 무료로 바꿔 드립니다.
       </p>
     </div>
   </fieldset>

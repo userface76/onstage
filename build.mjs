@@ -154,8 +154,10 @@ async function main() {
 
   const demoBase = await readJson(p('data', 'demo.json'));
   for (const d of DESIGNS) {
+    // 배치를 정해 둔 디자인은 그 배치로 보여 준다 — 전시형은 C안으로 띄우면 뜻이 안 산다
     const demo = resolvePhotos({
       ...structuredClone(demoBase),
+      ...(d.demo || {}),
       slug: `designs/${d.code}`,
       design: d.code,
       name: demoBase.name,
