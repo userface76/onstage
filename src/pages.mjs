@@ -64,7 +64,8 @@ h1 .hl{color:var(--ac)}
 .cat b{font-family:var(--display);font-size:18px;letter-spacing:-.01em}
 .cat span{font-size:14.5px;color:var(--ivory-2);line-height:1.7}
 .types{display:grid;gap:14px;margin-top:26px}
-@media(min-width:760px){.types{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:760px){.types{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1000px){.types{grid-template-columns:repeat(4,1fr)}}
 .scope{margin-top:26px;display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
 @media(min-width:640px){.scope{grid-template-columns:repeat(2,1fr)}}
 @media(min-width:960px){.scope{grid-template-columns:repeat(4,1fr)}}
@@ -242,6 +243,7 @@ export function renderLanding(site, artists) {
     <div class="cat"><b>A · 원페이지</b><span>대표 이미지와 영상이 첫 화면. 가장 빠르고 가벼운 구성.</span></div>
     <div class="cat"><b>B · 일정 중심</b><span>다가오는 공연이 첫 화면. 정기 무대가 있을 때.</span></div>
     <div class="cat"><b>C · 섭외 중심</b><span>섭외 버튼과 조건이 맨 위로. 섭외가 수입일 때.</span></div>
+    <div class="cat"><b>D · 전시형</b><span>사진 한 장이 첫 화면. 나머지는 접힌 메뉴 안에. 이름이 이미 알려졌을 때.</span></div>
   </div>
 </section></div>
 

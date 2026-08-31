@@ -141,6 +141,7 @@ export function applyBody(site, designs) {
         <option>C · 섭외 중심 — 섭외 버튼과 조건이 맨 위 (가장 많이 선택)</option>
         <option>A · 원페이지 — 대표 이미지와 영상이 첫 화면</option>
         <option>B · 일정 중심 — 다가오는 공연이 첫 화면</option>
+        <option>D · 전시형 — 사진 한 장이 첫 화면, 메뉴는 접어 둠</option>
         <option>잘 모르겠습니다 · 추천해 주세요</option>
       </select></label>
 

@@ -22,9 +22,48 @@ type     (유형)  →  어떤 순서로 배치하나
 | `A` | 대표 이미지 · 이름 | 일정이 드물고 인상만 남기면 될 때 |
 | `B` | 다음 일정 | 정기 공연이 있을 때 |
 | `C` | 섭외 버튼 + 사실 4칸 | 섭외가 곧 수입일 때 |
+| `D` | 사진 한 장. 그게 전부 | 이름이 이미 알려져 검색해서 찾아올 때 |
 
-**공통 블록**(프로필 · 갤러리 · 일정 · 이력 · 섭외)은 모든 조합에 들어간다.
+**D(전시형)만 메뉴가 다르다.** 상단에 이름과 `MENU` 만 남고 갈래는 눌러야 펼쳐진다.
+첫 화면 아래 「둘러보기」 칸에 같은 링크를 한 번 더 둔다 — 접힌 메뉴만 두면 검색엔진이 하위 페이지를 못 찾는다.
+`"menu": "bar"` 로 되돌리거나 다른 유형에 `"menu": "overlay"` 를 줄 수 있다.
+
+**D 를 권하지 않는 경우** — 처음 보는 담당자에게 「무엇을 하는 사람인지」부터 알려야 한다면 A · C 가 낫다.
+D 는 이름을 알고 찾아온 사람을 위한 배치다.
+
+**공통 블록**(프로필 · 갤러리 · 일정 · 이력 · 수상 · 해외 공연 · 섭외)은 모든 조합에 들어간다.
 직군이 늘면 `src/render.mjs`의 `CATEGORY_BLOCKS`에 블록 하나만 추가한다.
+
+수상(`awards`)과 해외 공연(`tour`)은 **자료가 있을 때만** 나온다.
+`history` 안에 섞어 두면 묻히므로, 세계대회 입상처럼 그 자체가 근거가 되는 것은 따로 세운다.
+
+```json
+"awards": [{ "year": "2024", "title": "전국마술대회", "place": "한국마술연합 · 서울", "result": "대상" }],
+"tour":   [{ "year": "2025", "country": "일본", "city": "오사카", "event": "국제 매직 위크" }]
+```
+
+## 여러 페이지로 나누기
+
+`"multipage": true` 를 주면 갈래마다 페이지가 따로 생긴다.
+어떤 갈래를 쓸지는 `pages` 로 고른다 — 안 쓰면 `about · stage · gallery · contact` 넷이다.
+
+```json
+"multipage": true,
+"pages": ["about", "award", "tour", "gallery", "contact"]
+```
+
+| 갈래 | 주소 | 들어가는 것 |
+|---|---|---|
+| `about` | `/<slug>/about/` | 소개 + 활동 이력 |
+| `stage` | `/<slug>/stage/` | 직군 블록 + 일정 (배우는 「작품」으로 이름이 바뀐다) |
+| `award` | `/<slug>/award/` | 수상 경력 |
+| `tour` | `/<slug>/tour/` | 해외 무대 |
+| `gallery` | `/<slug>/gallery/` | 사진 |
+| `contact` | `/<slug>/contact/` | 섭외 문의폼 |
+
+갈래를 늘리려면 `src/render.mjs` 의 `PAGES` 에 한 줄만 넣는다.
+상단 메뉴 · 둘러보기 칸 · sitemap 이 함께 따라온다.
+`pages` 에 없는 이름을 적으면 빌드가 멈춘다.
 
 ## 아티스트 추가하는 법
 
@@ -33,6 +72,7 @@ type     (유형)  →  어떤 순서로 배치하나
 3. `npm run build`
 
 `slug` · `name` · `category` · `type` 이 없거나 이상하면 빌드가 멈춘다.
+`pages` 는 `multipage` 가 켜져 있을 때만 쓴다.
 
 ## 빈 값 규칙 — 중요
 
@@ -60,7 +100,8 @@ data/site.json          브랜드 이름 · 주소
 data/artists/*.json     아티스트 한 명 = 파일 하나
 public/artists/<slug>/  사진
 src/theme.mjs           CSS. 어두운 무대 톤 하나. 아티스트마다 강조색(accent)만 다름
-src/render.mjs          아티스트 → HTML. 직군 블록 + 유형 배치
+src/nav.mjs             접히는 오버레이 메뉴 (유형 D)
+src/render.mjs          아티스트 → HTML. 직군 블록 + 유형 배치 + 페이지 갈래(PAGES)
 src/pages.mjs           랜딩 · 목록
 build.mjs               전부 묶어 dist/ 로
 dist/                   빌드 결과. git에 올리지 않는다 (Cloudflare가 직접 만든다)
